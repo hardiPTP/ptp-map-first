@@ -1,0 +1,162 @@
+/* Primitives. Tokens only (tokens.css). Specs: docs/figma/SPEC.md. */
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.ptp-icon {
+  display: inline-block;
+  flex: none;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-size: contain; mask-size: contain;
+  -webkit-mask-position: center; mask-position: center;
+}
+img.ptp-icon { background: none; }
+
+/* ---------- Button (Figma button 3647:3721) ---------- */
+.ptp-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: var(--space-touch-min);
+  padding: 12px 20px;
+  border: 0; border-radius: var(--radius-pill);
+  font: var(--text-label-lg);
+  white-space: nowrap;
+  transition: box-shadow 120ms ease;
+  -webkit-backdrop-filter: var(--elev-raise-s-blur); backdrop-filter: var(--elev-raise-s-blur);
+  box-shadow: var(--elev-raise-s);
+}
+.ptp-btn--big { padding: 14px 22px; min-height: 52px; }
+.ptp-btn--fill { width: 100%; }
+.ptp-btn:focus-visible { outline: none; box-shadow: var(--elev-raise-s), var(--focus-ring); }
+
+.ptp-btn--primary { background: var(--colour-accent-orange-deep); color: var(--colour-accent-cream); }
+.ptp-btn--primary:active, .ptp-btn--primary.is-pressed { box-shadow: var(--elev-press-orange); }
+
+.ptp-btn--quiet { background: var(--surface-canvas); color: var(--colour-ink-100); }
+.ptp-btn--quiet:active, .ptp-btn--quiet.is-pressed { box-shadow: var(--elev-press); }
+
+.ptp-btn--soft { background: var(--colour-accent-orange-soft); color: var(--colour-accent-orange-deep); }
+.ptp-btn--soft:active, .ptp-btn--soft.is-pressed { box-shadow: var(--elev-press-s); }
+
+.ptp-btn:disabled {
+  background: var(--surface-canvas); color: var(--colour-ink-25);
+  box-shadow: var(--elev-press-s); cursor: default;
+}
+
+/* ---------- Shell icon button (Figma shell/icon 3539:2970) ---------- */
+.ptp-shell {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  padding: 0; border: 0; border-radius: var(--radius-pill);
+  color: var(--colour-ink-100);
+}
+.ptp-shell--quiet { background: transparent; }
+.ptp-shell--raised {
+  background: var(--surface-canvas);
+  -webkit-backdrop-filter: var(--elev-raise-blur); backdrop-filter: var(--elev-raise-blur);
+  box-shadow: var(--elev-raise);
+}
+.ptp-shell--accent { background: var(--colour-accent-orange); color: var(--surface-paper); box-shadow: var(--elev-raise-s); }
+.ptp-shell:active { background: var(--surface-well); box-shadow: var(--elev-press-s); }
+.ptp-shell--accent:active { background: var(--colour-accent-orange); box-shadow: var(--elev-press-orange); }
+.ptp-shell:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---------- Chip (Figma chip/filter 3539:2975), 44px tall per PRD ---------- */
+.ptp-chip {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: var(--space-touch-min);
+  padding: 0 18px;
+  border: 0; border-radius: var(--radius-pill);
+  background: var(--surface-canvas);
+  box-shadow: var(--elev-press-s);
+  color: var(--colour-ink-80);
+  font: var(--text-label-lg);
+  white-space: nowrap;
+}
+.ptp-chip.is-selected {
+  background: var(--colour-accent-orange-deep);
+  box-shadow: var(--elev-press-orange);
+  color: var(--colour-accent-cream);
+}
+.ptp-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---------- Card shell (Figma card/update 3576:1359) ---------- */
+.ptp-card {
+  display: block;
+  padding: var(--space-card-pad);
+  border-radius: var(--radius-card);
+  background: var(--surface-paper-glass);
+  -webkit-backdrop-filter: var(--elev-raise-blur); backdrop-filter: var(--elev-raise-blur);
+  box-shadow: var(--elev-raise);
+  list-style: none;
+}
+/* Push The Pin posts: accent orange edge (PRD "Who posted it"); 2px = Figma rail stroke weight. */
+.ptp-card--ptp { box-shadow: inset 2px 0 0 var(--colour-accent-orange), var(--elev-raise); }
+
+/* ---------- Tag (map tag: symbol + short value) ---------- */
+.ptp-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 24px; padding: 0 8px 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-paper);
+  box-shadow: var(--elev-raise-s);
+  color: var(--colour-ink-100);
+  font: var(--text-meta-lg);
+  white-space: nowrap;
+}
+.ptp-tag--orange { color: var(--colour-accent-orange-deep); }
+.ptp-tag__value { font-variant-numeric: tabular-nums; }
+
+/* ---------- Poster labels ---------- */
+.ptp-source { display: inline-flex; align-items: center; color: var(--colour-ink-100); }
+.ptp-source--chip {
+  gap: 7px; padding: 6px 12px 6px 10px;
+  border-radius: var(--radius-pill); background: var(--surface-well);
+  font: var(--text-meta-lg); color: var(--colour-ink-80);
+}
+.ptp-source--line { gap: 8px; font: var(--text-meta-lg); color: var(--colour-ink-60); }
+
+.ptp-poster { display: inline-flex; align-items: center; gap: 7px; min-width: 0; font: var(--text-meta-lg); color: var(--colour-ink-80); }
+.ptp-poster__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ptp-poster__avatar {
+  flex: none; width: 20px; height: 20px; border-radius: var(--radius-pill);
+  object-fit: cover; background: var(--surface-well);
+}
+.ptp-mark {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  border-radius: var(--radius-pill); background: var(--colour-accent-orange);
+}
+
+/* ---------- Sheet (Figma sheet 3539:2980) ---------- */
+.ptp-sheet {
+  background: var(--surface-paper-glass);
+  -webkit-backdrop-filter: var(--elev-sheet-blur); backdrop-filter: var(--elev-sheet-blur);
+  box-shadow: var(--elev-sheet);
+  border-radius: var(--radius-sheet-figma) var(--radius-sheet-figma) 0 0;
+}
+.ptp-grabber { display: block; width: 38px; height: 4px; border-radius: 2px; background: var(--colour-ink-25); }
+
+/* ---------- Field (Figma field/well 3531:2830) ---------- */
+.ptp-field {
+  width: 100%;
+  padding: 15px 18px;
+  border: var(--stroke) solid transparent;
+  border-radius: var(--radius-well);
+  background: var(--surface-well);
+  box-shadow: var(--elev-press);
+  font: var(--text-body-lg);
+  color: var(--colour-ink-100);
+}
+.ptp-field::placeholder { color: var(--colour-ink-45); }
+.ptp-field:focus { outline: none; background: var(--surface-paper); border-color: var(--colour-accent-orange); }
+
+/* ---------- Snack (Figma snack 3539:2976) ---------- */
+.ptp-snack {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 18px;
+  border-radius: var(--radius-well);
+  background: var(--colour-ink-100); color: var(--surface-paper);
+  box-shadow: var(--elev-sheet);
+  font: var(--text-label-lg);
+}

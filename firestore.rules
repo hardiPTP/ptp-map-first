@@ -1,0 +1,58 @@
+rules_version = '2';
+// Docs: https://firebase.google.com/docs/firestore/security/rules-fields
+// PRD Risks: anyone can post without login; rules check types and lengths only.
+// Clients may only write postedAs == "neighbour". Place and Push The Pin posts are seeded
+// by the team with the Admin SDK, which bypasses these rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function optString(d, k, maxLen) {
+      return !(k in d) || d[k] == null || (d[k] is string && d[k].size() <= maxLen);
+    }
+    function optNumber(d, k) { return !(k in d) || d[k] == null || d[k] is number; }
+
+    function validNewPin(d) {
+      return d.keys().hasAll(['type', 'title', 'lat', 'lng', 'createdAt', 'createdBy', 'postedAs', 'status'])
+        && d.keys().hasOnly(['type', 'title', 'body', 'lat', 'lng', 'placeId', 'placeName',
+                             'startsAt', 'createdAt', 'createdBy', 'lastSupportAt', 'postedAs', 'status'])
+        && d.type in ['civic', 'event', 'ask']
+        && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
+        && optString(d, 'body', 1000)
+        && d.lat is number && d.lat >= -90 && d.lat <= 90
+        && d.lng is number && d.lng >= -180 && d.lng <= 180
+        && optString(d, 'placeId', 300)
+        && optString(d, 'placeName', 200)
+        && optNumber(d, 'startsAt')
+        && (d.type != 'event' || d.startsAt is number)
+        && optNumber(d, 'lastSupportAt')
+        && d.createdAt is number
+        && d.createdBy == request.auth.uid
+        && d.postedAs == 'neighbour'
+        && d.status == 'active';
+    }
+
+    match /pins/{pinId} {
+      allow read: if true;
+      allow create: if signedIn() && validNewPin(request.resource.data);
+      // Supporting bumps lastSupportAt; nothing else may change from a client.
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSupportAt'])
+        && request.resource.data.lastSupportAt is number;
+      allow delete: if false;
+    }
+
+    match /supports/{supportId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && supportId == request.resource.data.pinId + '_' + request.auth.uid
+        && request.resource.data.keys().hasOnly(['pinId', 'deviceId', 'createdAt'])
+        && request.resource.data.pinId is string
+        && request.resource.data.deviceId == request.auth.uid
+        && request.resource.data.createdAt is number
+        && exists(/databases/$(database)/documents/pins/$(request.resource.data.pinId));
+      allow update: if false;
+      allow delete: if signedIn() && resource.data.deviceId == request.auth.uid;
+    }
+  }
+}

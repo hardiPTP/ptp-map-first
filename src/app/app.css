@@ -1,0 +1,11 @@
+/* z-order contract: map 0, top 10, sheet 20, fabs 25, create 30, detail 40, account/area sheets 50. */
+.app-shell { position: relative; height: 100dvh; overflow: hidden; }
+.app-map { position: absolute; inset: 0; z-index: 0; }
+.app-top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; pointer-events: none; }
+.app-top > * { pointer-events: auto; }
+.app-fabs {
+  position: absolute; right: var(--space-margin); z-index: 25;
+  bottom: calc(var(--sheet-offset, 0px) + 12px);
+  display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
+  transition: bottom 240ms ease;
+}
