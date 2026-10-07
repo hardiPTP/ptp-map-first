@@ -49,6 +49,25 @@ Lead at Gate 2: "just posted by this device" first in the feed (+ test); detail 
 
 Gate 2: typecheck pass, lint pass, unit 127/127 + 1 lead test, rules 14/14, build pass, e2e 9/9 on emulators (`npm run e2e:emulator`: create one of each type with postedAs neighbour verified in Firestore; support toggle persisted as pinId_uid and removed on second tap; detail open/next/close; chips; area strip share; name privacy).
 
+## Phase 3: DONE (Gate 3 passed 2026-10-07)
+
+- QA screenshots at 390x844 and 360x800 (docs/screens/qa/, 13 states each), text/tap-target audit (docs/screens/qa/audit.json: no text under 14 px; tap targets >= 44 px incl. hit-area extensions).
+- Independent reviewer (opus, no code access) wrote docs/REVIEW.md: 92 PASS, 16 FAIL, 24 CANNOT VERIFY. Privacy PASS, all design bans PASS.
+- Lead fixed 10 fails, justified 6 (DECISIONS.md), re-screenshotted (360x800 post-fix set, top-* shots), added side-by-sides with Figma (sbs-*.png). REVIEW.md section G: no unjustified fails.
+- Maps Demo Key daily quota was reached during re-capture: the 390x844 qa set is partly pre-fix; the 360x800 set is post-fix.
+
+Gate 3: typecheck, lint, unit 128/128, build pass; REVIEW.md has no unjustified fails.
+
+## Phase 4: BLOCKED on the human (Firebase)
+
+No VITE_FIREBASE_* values in .env and no `firebase login`. Everything is built and verified on the emulators (`npm run e2e:emulator`, 9/9). To deploy:
+1. `npx firebase login`
+2. Create a Firebase project (console), enable Firestore and Anonymous sign-in, add a Web app, then `npx firebase use --add` (choose the project).
+3. Fill VITE_FIREBASE_API_KEY, VITE_FIREBASE_AUTH_DOMAIN, VITE_FIREBASE_PROJECT_ID, VITE_FIREBASE_APP_ID in .env and set VITE_DATA_SOURCE=firebase.
+4. `gcloud auth application-default login` (seed uses firebase-admin applicationDefault()), then `npm run seed -- --target=prod`.
+5. `npm run deploy` (build + hosting + firestore rules).
+Phase 5 (traffic automation) not started, per instructions.
+
 ## Unverified
 
 - Real touch drag of the sheet and real touch long-press (tested with mouse pointer events).
