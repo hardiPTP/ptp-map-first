@@ -18,7 +18,7 @@ import './detail.css'
 
 const ACTION_LABEL = { civic: 'I see it too', event: "I'm going", ask: 'I can help', area: '' } as const
 const COUNT_WORD = { civic: 'see it', event: 'going', ask: 'can help', area: '' } as const
-const CHIP_TITLE: Record<Filter, string> = { all: '', civic: 'Issues', event: 'Events', ask: 'Asks' }
+const CHIP_TITLE: Record<Filter, string> = { all: '', civic: 'Issues', event: 'Events', ask: 'Asks', places: 'Places' }
 const TYPE_TITLE = { civic: 'Issue', event: 'Event', ask: 'Ask', area: 'Update' } as const
 
 /** Header title: the feed's Pulse wording, the chip name when a type chip is active, the place when searching. */

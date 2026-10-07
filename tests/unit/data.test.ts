@@ -27,27 +27,33 @@ describe('seed', () => {
   const { pins, supports } = materialise(seed, NOW)
   it('has the planned mix', () => {
     const n = (t: string) => pins.filter((p) => p.type === t).length
-    expect([n('event'), n('civic'), n('ask'), n('area')]).toEqual([12, 10, 8, 2])
+    expect([n('event'), n('civic'), n('ask'), n('area')]).toEqual([10, 5, 3, 1])
   })
   it('is deterministic', () => expect(materialise(seed, NOW)).toEqual({ pins, supports }))
   it('marks everything seed and never uses a person name', () => {
     expect(pins.every((p) => p.seed === true && p.createdBy === 'seed' && p.status === 'active')).toBe(true)
     expect(supports.every((s) => s.deviceId.startsWith('seed-dev-') && s.id === `${s.pinId}_${s.deviceId}`)).toBe(true)
   })
-  it('area updates are ptp with radius, topic and one Extended', () => {
+  it('area updates are ptp with radius, topic and an end', () => {
     const areas = pins.filter((p) => p.type === 'area')
     expect(areas.every((p) => p.postedAs === 'ptp' && p.radiusM && p.topic && p.endsAt)).toBe(true)
-    expect(areas.filter((p) => p.endsAt! > p.endsAtOriginal!).length).toBe(1)
   })
-  it('events have a start; place posts keep placeId and placeName', () => {
+  it('real items carry a source link, a fixed date and a Google place', () => {
+    const real = pins.filter((p) => p.id.startsWith('real-'))
+    expect(real.length).toBeGreaterThanOrEqual(10)
+    expect(real.every((p) => p.postedAs === 'ptp' && p.sourceUrl?.startsWith('https://') && p.sourceLabel)).toBe(true)
+    expect(real.filter((p) => p.type !== 'area').every((p) => p.placeId && p.placeName)).toBe(true)
+    // fixed dates do not move with "now"
+    const later = materialise(seed, NOW + 86_400_000).pins.find((p) => p.id === 'real-event-04')!
+    expect(later.startsAt).toBe(pins.find((p) => p.id === 'real-event-04')!.startsAt)
+  })
+  it('events have a start', () => {
     expect(pins.filter((p) => p.type === 'event').every((p) => typeof p.startsAt === 'number')).toBe(true)
-    const places = pins.filter((p) => p.postedAs === 'place')
-    expect(places.length).toBeGreaterThanOrEqual(2)
-    expect(places.every((p) => p.placeId && p.placeName)).toBe(true)
   })
-  it('several civic pins are fresh enough for Pulse (supported within 3 h)', () => {
-    const fresh = pins.filter((p) => p.type === 'civic' && p.lastSupportAt && NOW - p.lastSupportAt < 3 * 3_600_000)
-    expect(fresh.length).toBeGreaterThanOrEqual(4)
+  it('neighbour demo posts stay few and are marked seed', () => {
+    const demo = pins.filter((p) => p.id.startsWith('seed-'))
+    expect(demo.length).toBeLessThanOrEqual(6)
+    expect(demo.every((p) => p.postedAs === 'neighbour')).toBe(true)
   })
   it('has no placeholder text', () => {
     expect(JSON.stringify(seed)).not.toMatch(/lorem|Event \d/i)
@@ -60,7 +66,7 @@ describe('mock repo', () => {
     await repo.init()
     let sup: Support[] = []
     repo.subscribeSupports((s) => (sup = s))
-    const id = 'seed-civic-08'
+    const id = 'seed-civic-02'
     const before = sup.filter((s) => s.pinId === id).length
     expect((await repo.toggleSupport(id)).supported).toBe(true)
     expect(sup.filter((s) => s.pinId === id).length).toBe(before + 1)
@@ -74,8 +80,8 @@ describe('mock repo', () => {
     await repo.init()
     let pins: Pin[] = []
     repo.subscribePins(null, (p) => (pins = p))
-    await repo.toggleSupport('seed-ask-08')
-    expect(pins.find((p) => p.id === 'seed-ask-08')!.lastSupportAt).toBe(NOW)
+    await repo.toggleSupport('seed-ask-01')
+    expect(pins.find((p) => p.id === 'seed-ask-01')!.lastSupportAt).toBe(NOW)
   })
   it('createPin forces neighbour/active and appears in the subscription', async () => {
     const repo = createMockRepo(seed, () => NOW)

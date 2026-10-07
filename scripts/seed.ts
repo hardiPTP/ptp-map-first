@@ -73,115 +73,90 @@ type Spec = {
   /** Show the place name on the pin. Civic/ask/area on a street use the street result's id and name. */
   tag?: Place
   postedAs?: 'neighbour' | 'place' | 'ptp'
-  createdAtMin: number
+  createdAtMin?: number
   startsAt?: RelTime
   endsAt?: RelTime
   endsAtOriginal?: RelTime
   radiusM?: number
-  topic?: 'water' | 'power' | 'traffic' | 'road'
+  topic?: 'water' | 'power' | 'traffic' | 'road' | 'festival'
   /** [fresh supports (within 3 h), older supports (1 to 14 days)] */
   sup: [number, number]
+  createdAtIso?: string
+  sourceUrl?: string
+  sourceLabel?: string
 }
 
-const hill = street('hill-road'), linking = street('linking-road'), sv = street('sv-road')
-const chapel = street('chapel-road'), carter = street('carter-road'), bandra = street('bandra-west')
+const hill = street('hill-road'), linking = street('linking-road')
+const chapel = street('chapel-road'), bandra = street('bandra-west')
+
+const IST = (d: string) => ({ iso: `${d}:00+05:30` })
+const AE = 'Listing on allevents.in'
 
 const specs: Spec[] = [
-  // ---- Events (12) ----
-  { id: 'seed-event-01', type: 'event', postedAs: 'place', at: venue('yoga-studio', 'Diva Yoga'), title: 'Beginners yoga, bring your own mat',
-    body: 'Gentle one hour class, no experience needed. Please come 10 minutes early to settle in.',
-    createdAtMin: -2900, startsAt: { min: 90 }, endsAt: { min: 150 }, sup: [1, 5] },
-  { id: 'seed-event-02', type: 'event', at: venue('community-hall', 'Pioneer Hall'), title: 'Carrom and chai evening for seniors',
-    body: 'Boards are there, just walk in. Chai is on us, snacks if someone brings.',
-    createdAtMin: -1500, startsAt: { min: 45 }, endsAt: { min: 165 }, sup: [2, 4] },
-  { id: 'seed-event-03', type: 'event', postedAs: 'place', at: venue('library', 'Trilogy'), title: 'Story hour for children, ages 5 to 8',
-    body: 'Read-aloud and a small craft. Parents can sit at the back or step out for a coffee.',
-    createdAtMin: -4300, startsAt: { min: 110 }, endsAt: { min: 170 }, sup: [0, 6] },
-  { id: 'seed-event-04', type: 'event', at: venue('garden', 'Central Garden'), title: 'Evening walk to Bandstand and back',
-    body: 'Meeting at the garden gate, easy pace, about 45 minutes. All ages welcome.',
-    createdAtMin: -600, startsAt: { min: 300 }, endsAt: { min: 350 }, sup: [1, 3] },
-  { id: 'seed-event-05', type: 'event', at: venue('community-hall', 'KCA Hall'), title: 'Residents meet on water tanker timings',
-    body: 'For the lanes behind Veronica Road. We will fix the tanker schedule and a simple rota.',
-    createdAtMin: -1800, startsAt: { min: 420 }, endsAt: { min: 510 }, sup: [0, 7] },
-  { id: 'seed-event-06', type: 'event', at: venue('garden', 'Guru Nanak Park'), title: 'Morning laughter club at the park',
-    body: 'Free, open to everyone. Wear something comfortable, we finish by 7.30.',
-    createdAtMin: -3000, startsAt: { day: 'tomorrow', h: 6, m: 30 }, endsAt: { day: 'tomorrow', h: 7, m: 30 }, sup: [0, 8] },
-  { id: 'seed-event-07', type: 'event', at: venue('library', 'Sister Library'), title: 'Chess evening, all levels',
-    body: 'Bring a board if you have one. We will pair people up on the day.',
-    createdAtMin: -2100, startsAt: { day: 'tomorrow', h: 19 }, endsAt: { day: 'tomorrow', h: 21 }, sup: [0, 4] },
-  { id: 'seed-event-08', type: 'event', at: venue('community-hall', 'KCA Hall'), title: 'Watercolour class for beginners',
-    body: 'Paper and paints for the first class. Cost is shared among whoever comes.',
-    createdAtMin: -5200, startsAt: { day: 'sat', h: 17 }, endsAt: { day: 'sat', h: 19 }, sup: [1, 9] },
-  { id: 'seed-event-09', type: 'event', at: venue('garden', 'Rao Saheb Patwardhan'), title: 'Sapling planting and park clean-up',
-    body: 'Gloves and saplings will be there. Bring a water bottle and a cap.',
-    createdAtMin: -7000, startsAt: { day: 'sat', h: 9, m: 30 }, endsAt: { day: 'sat', h: 11, m: 30 }, sup: [0, 10] },
-  { id: 'seed-event-10', type: 'event', at: carter, tag: carter, title: 'Sunday morning run along Carter Road',
-    body: 'About 5 km at an easy pace, out and back. Nobody is left behind.',
-    createdAtMin: -4000, startsAt: { day: 'sun', h: 6, m: 30 }, endsAt: { day: 'sun', h: 7, m: 45 }, sup: [0, 6] },
-  { id: 'seed-event-11', type: 'event', postedAs: 'place', at: venue('library', 'Katrak Park'), title: 'Book swap, bring two and take two',
-    body: 'Fiction, kids books and old magazines are all welcome. Please keep the books in readable condition.',
-    createdAtMin: -3600, startsAt: { day: 'sun', h: 11 }, endsAt: { day: 'sun', h: 13 }, sup: [0, 5] },
-  { id: 'seed-event-12', type: 'event', postedAs: 'place', at: venue('gymkhana', 'Bandra Gymkhana'), title: 'Open badminton trial class for children 8 to 12',
-    body: 'Racquets are available. Please wear sports shoes and carry water.',
-    createdAtMin: -6000, startsAt: { day: 'sun', h: 16 }, endsAt: { day: 'sun', h: 17, m: 30 }, sup: [0, 7] },
+  // ---- Real events, 8 to 18 Oct 2026, from public listings (docs/REAL_DATA.md). Curated by PTP. ----
+  { id: 'real-event-01', type: 'event', postedAs: 'ptp', at: venue('v-chimbai', 'Chimbai'), title: 'Comedy open mic in Bandra',
+    body: 'New comics trying out sets. 18 and over, carry a photo ID.', createdAtIso: '2026-10-03T11:00:00+05:30',
+    startsAt: IST('2026-10-08T20:00'), endsAt: IST('2026-10-08T22:00'), sourceUrl: 'https://allevents.in/mumbai/comedy-open-mic-in-bandra/3900030647649338', sourceLabel: AE, sup: [0, 3] },
+  { id: 'real-event-02', type: 'event', postedAs: 'ptp', at: venue('v-borabora', 'BORA'), title: 'Pink Moss live, the Bandra sessions',
+    body: 'Live set on Waterfield Road. 21 and over, carry a photo ID.', createdAtIso: '2026-10-04T10:00:00+05:30',
+    startsAt: IST('2026-10-09T21:00'), endsAt: IST('2026-10-09T23:30'), sourceUrl: 'https://allevents.in/mumbai/pink-moss-live-the-bandra-sessions/3900030747146456', sourceLabel: AE, sup: [0, 2] },
+  { id: 'real-event-03', type: 'event', postedAs: 'ptp', at: venue('v-kcc', 'Khar Comedy'), title: 'Stand-up Virgin with Kubbra Sait and Devanshi Shah',
+    body: 'Stand-up at Khar Comedy Club, just past Bandra on Linking Road.', createdAtIso: '2026-10-02T10:00:00+05:30',
+    startsAt: IST('2026-10-09T20:00'), endsAt: IST('2026-10-09T21:30'), sourceUrl: 'https://allevents.in/mumbai/stand-up-virgin-ft-kubbra-sait-and-devanshi-shah/3900030621039354', sourceLabel: AE, sup: [0, 1] },
+  { id: 'real-event-04', type: 'event', postedAs: 'ptp', at: venue('v-corona', 'Corona'), title: 'SALT, a food and culture weekend',
+    body: 'About 50 food and drink brands, tastings, masterclasses and music. Saturday and Sunday, noon to 10 pm. Rs 699, under 12s free with a paying adult.',
+    createdAtIso: '2026-10-01T09:00:00+05:30', startsAt: IST('2026-10-10T12:00'), endsAt: IST('2026-10-11T22:00'),
+    sourceUrl: 'https://homegrown.co.in/homegrown-explore/salt-goya-brings-the-best-of-indian-food-drinks-under-one-roof-this-october', sourceLabel: 'Reported by Homegrown and Time Out', sup: [1, 5] },
+  { id: 'real-event-05', type: 'event', postedAs: 'ptp', at: venue('v-fort', 'Fort'), title: 'Hill sprints at Bandra Fort',
+    body: 'Free early morning running session with Coach Poonam. Bring water.', createdAtIso: '2026-10-05T08:00:00+05:30',
+    startsAt: IST('2026-10-11T06:00'), endsAt: IST('2026-10-11T08:00'), sourceUrl: 'https://allevents.in/mumbai/hill-sprints-with-coach-poonam/100002002712414744', sourceLabel: AE, sup: [0, 4] },
+  { id: 'real-event-06', type: 'event', postedAs: 'ptp', at: venue('v-kcc', 'Khar Comedy'), title: 'Duos with Prashasti Singh and Atul Khatri',
+    body: 'Two comics, one stage. 18 and over.', createdAtIso: '2026-10-03T10:00:00+05:30',
+    startsAt: IST('2026-10-11T20:00'), endsAt: IST('2026-10-11T21:30'), sourceUrl: 'https://allevents.in/mumbai/duos-ft-prashasti-singh-and-atul-khatri-kcc/3900030746586020', sourceLabel: AE, sup: [0, 1] },
+  { id: 'real-event-07', type: 'event', postedAs: 'ptp', at: venue('v-acropolis', 'Acropolis'), title: 'Free intro evening to a philosophy course',
+    body: 'Orientation session at New Acropolis on 15th Road. Free, open to all adults.', createdAtIso: '2026-10-04T12:00:00+05:30',
+    startsAt: IST('2026-10-13T19:30'), endsAt: IST('2026-10-13T21:30'), sourceUrl: 'https://allevents.in/mumbai/orientation-to-living-philosophy-course-an-invitation-to-a-school-of-philosophy-tickets/80002922315701', sourceLabel: AE, sup: [0, 2] },
+  { id: 'real-event-08', type: 'event', postedAs: 'ptp', at: venue('v-corona', 'Corona'), title: 'Bazaar and Beyond flea market, Oktoberfest edition',
+    body: 'Lifestyle stalls, food and music, 3 pm to 11 pm. 18 and over.', createdAtIso: '2026-10-06T10:00:00+05:30',
+    startsAt: IST('2026-10-17T15:00'), endsAt: IST('2026-10-17T23:00'), sourceUrl: 'https://allevents.in/mumbai/bazaar-and-beyond-oktoberfest-edition/3900030781608228', sourceLabel: AE, sup: [0, 2] },
+  { id: 'real-event-09', type: 'event', postedAs: 'ptp', at: venue('v-balgandharva', 'Gandharva'), title: 'Allow Me!, stand-up by Rahul Dua',
+    body: 'Stand-up show, 16 and over.', createdAtIso: '2026-10-01T10:00:00+05:30',
+    startsAt: IST('2026-10-17T19:00'), endsAt: IST('2026-10-17T20:30'), sourceUrl: 'https://allevents.in/mumbai/allow-me-a-standup-comedy-show-by-rahul-dua/3900030387701608', sourceLabel: AE, sup: [0, 1] },
+  { id: 'real-event-10', type: 'event', postedAs: 'ptp', at: venue('v-kcc', 'Khar Comedy'), title: 'Out of Syllabus with Sapan Verma',
+    body: 'Afternoon stand-up at Khar Comedy Club.', createdAtIso: '2026-10-05T10:00:00+05:30',
+    startsAt: IST('2026-10-18T16:00'), endsAt: IST('2026-10-18T17:00'), sourceUrl: 'https://allevents.in/mumbai/out-of-syllabus-ft-sapan-verma-kcc/3900030762794136', sourceLabel: AE, sup: [0, 1] },
 
-  // ---- Civic (10), ages 1 to 20 days ----
-  { id: 'seed-civic-01', type: 'civic', at: venue('church-hall', "St. Andrew's Church"), tag: hill, title: 'Streetlight not working on Hill Road',
-    body: 'The pole just before the church steps is dark after 7 pm. Very difficult for people walking home. Complained to the ward office once.',
-    createdAtMin: -6 * 1440 - 130, sup: [0, 6] },
-  { id: 'seed-civic-02', type: 'civic', at: venue('yoga-studio', 'Yoga Yuga'), tag: hill, title: 'Hawkers back on the footpath outside no. 100',
-    body: 'Footpath is fully blocked again, people are walking on the road with the buses. It was clear for two weeks after the last drive.',
-    createdAtMin: -1 * 1440 - 200, sup: [4, 5] },
-  { id: 'seed-civic-03', type: 'civic', at: linking, tag: linking, title: 'Open drain cover near the bus stop',
-    body: 'Cover is missing for three days now. Someone has put a stick in it. A child or a cyclist will fall in.',
-    createdAtMin: -3 * 1440 - 60, sup: [3, 6] },
-  { id: 'seed-civic-04', type: 'civic', at: venue('yoga-studio', 'Shivali'), tag: linking, title: 'Cars parked on the footpath every evening',
-    body: 'From 6 pm to 10 pm the whole footpath near the corner is taken by cars. Old people have to walk on the road.',
-    createdAtMin: -9 * 1440 - 300, sup: [0, 4] },
-  { id: 'seed-civic-05', type: 'civic', at: sv, tag: sv, title: 'Garbage not cleared for two days',
-    body: 'Bags are piled up next to the electric pole near the signal. Crows and stray dogs are spreading it on the road.',
-    createdAtMin: -2 * 1440 - 20, sup: [3, 3] },
-  { id: 'seed-civic-06', type: 'civic', at: venue('library', 'National Library'), tag: sv, title: 'Big pothole in the left lane of S.V. Road',
-    body: 'Two wheelers swerve suddenly to avoid it. Gets worse after every rain.',
-    createdAtMin: -14 * 1440 - 400, sup: [0, 8] },
-  { id: 'seed-civic-07', type: 'civic', at: venue('church-hall', 'Mount Carmel'), tag: chapel, title: 'Tree branch hanging over the footpath',
-    body: 'A big branch cracked in the last rain and is hanging low. Please get the garden department to cut it before it falls.',
-    createdAtMin: -4 * 1440 - 250, sup: [1, 5] },
-  { id: 'seed-civic-08', type: 'civic', at: chapel, tag: chapel, title: 'Water logging in the lane after evening rain',
-    body: 'Takes hours to clear. The drain seems choked, cars are throwing water on the footpath.',
-    createdAtMin: -20 * 1440 - 90, sup: [0, 3] },
-  { id: 'seed-civic-09', type: 'civic', at: venue('library', 'Trilogy'), tag: carter, title: 'Streetlights off on the stretch before the promenade',
-    body: 'Four poles in a row are dark. Joggers and dog walkers are using phone torches.',
-    createdAtMin: -11 * 1440 - 40, sup: [3, 5] },
-  { id: 'seed-civic-10', type: 'civic', at: carter, tag: carter, title: 'Broken tiles on the jogging path near the entrance',
-    body: 'Two tiles are loose and sticking up. Almost tripped on it this morning.',
-    createdAtMin: -17 * 1440 - 15, sup: [0, 4] },
+  // ---- Real civic issues from news reports. Curated by PTP. ----
+  { id: 'real-civic-01', type: 'civic', postedAs: 'ptp', at: hill, tag: hill, title: 'Hawkers and stalls blocking the Hill Road footpath',
+    body: 'Residents complained to the ward. H-West officials inspected and said notices would go out to encroachers within 15 days.',
+    createdAtIso: '2026-08-27T10:00:00+05:30', sourceUrl: 'https://www.constructionworld.in/transport-infrastructure/highways-and-roads-infrastructure/bmc-removes-28-structures-and-targets-hill-road-encroachments/96430',
+    sourceLabel: 'Reported by Construction World, 27 Aug', sup: [2, 7] },
+  { id: 'real-civic-02', type: 'civic', postedAs: 'ptp', at: venue('garden', 'Patwardhan'), title: 'Patwardhan Park revamp still waiting for approval',
+    body: 'BMC has proposed a Rs 5.1 crore facelift with new paths, toilets and play equipment. It awaits Standing Committee approval. Locals say regular upkeep is the real need.',
+    createdAtIso: '2026-08-31T10:00:00+05:30', sourceUrl: 'https://www.freepressjournal.in/mumbai/mumbai-bmc-proposes-510-crore-facelift-for-bandras-patwardhan-park-excludes-underground-parking-plot',
+    sourceLabel: 'Reported by Free Press Journal, 31 Aug', sup: [1, 4] },
+  { id: 'real-civic-03', type: 'civic', postedAs: 'ptp', at: venue('v-reclamation', 'Neville'), title: 'Plan to turn the Reclamation football ground into a convention centre',
+    body: 'BMC has proposed converting the ground. Players and local representatives have protested.',
+    createdAtIso: '2026-06-28T10:00:00+05:30', sourceUrl: 'https://www.freepressjournal.in/amp/mumbai/bandra-reclamation-football-ground-conversion-plan-faces-opposition-from-mp-varsha-gaikwad-protesters-video',
+    sourceLabel: 'Reported by Free Press Journal, 28 Jun', sup: [1, 5] },
 
-  // ---- Asks (8) ----
-  { id: 'seed-ask-01', type: 'ask', at: hill, tag: hill, title: 'Need someone to water plants for 3 days',
-    body: 'Going out of town from Friday. About 12 pots on the balcony, key with the watchman.', createdAtMin: -200, sup: [1, 1] },
-  { id: 'seed-ask-02', type: 'ask', at: chapel, tag: chapel, title: 'Looking for a good electrician for a fan and two switches',
-    body: 'Anyone in the lane who has a reliable one? Please share the number on WhatsApp.', createdAtMin: -1100, sup: [0, 3] },
-  { id: 'seed-ask-03', type: 'ask', at: venue('garden', 'Guru Nanak Park'), tag: venue('garden', 'Guru Nanak Park'), title: 'Lost grey cat with a white paw, answers to Moti',
-    body: 'Last seen near the park gate yesterday evening. He is shy but will come if you call him.', createdAtMin: -60, sup: [2, 0] },
-  { id: 'seed-ask-04', type: 'ask', at: linking, tag: linking, title: 'Can someone teach my mother to use UPI?',
-    body: 'She is 72 and nervous about it. Happy to pay for your time, a 30 minute session is enough.', createdAtMin: -4000, sup: [0, 3] },
-  { id: 'seed-ask-05', type: 'ask', at: sv, tag: sv, title: 'Need a cab share to the airport on Saturday 5 am',
-    body: 'Going to Terminal 2 with two bags. Can split the fare.', createdAtMin: -700, sup: [0, 2] },
-  { id: 'seed-ask-06', type: 'ask', at: bandra, tag: bandra, title: 'Does anyone have a ladder I can borrow on Sunday?',
-    body: 'Need to change a tube light in the passage. Will return the same day.', createdAtMin: -2500, sup: [0, 2] },
-  { id: 'seed-ask-07', type: 'ask', at: venue('library', 'Katrak Park'), tag: venue('library', 'Katrak Park'), title: 'Looking for a Marathi tutor for my 10 year old',
-    body: 'Two evenings a week, at our home near the park. Retired teachers are most welcome.', createdAtMin: -2900, sup: [0, 4] },
-  { id: 'seed-ask-08', type: 'ask', at: carter, tag: carter, title: 'Old newspapers and cartons to give away',
-    body: 'About 30 kg, pick up from our gate any evening this week.', createdAtMin: -5600, sup: [0, 2] },
+  // ---- A few neighbour posts (demo content, marked seed) ----
+  { id: 'seed-civic-01', type: 'civic', at: venue('church-hall', "St. Andrew's Church"), tag: hill, title: 'Streetlight out before the church steps',
+    body: 'The pole just before the steps is dark after 7 pm. Hard for people walking home.', createdAtMin: -3 * 1440 - 130, sup: [1, 2] },
+  { id: 'seed-civic-02', type: 'civic', at: linking, tag: linking, title: 'Drain cover missing near the bus stop',
+    body: 'Someone has put a stick in it for now. A cyclist could go in.', createdAtMin: -1 * 1440 - 60, sup: [2, 1] },
+  { id: 'seed-ask-01', type: 'ask', at: hill, tag: hill, title: 'Someone to water my plants for 3 days?',
+    body: 'Going out of town from Friday. About 12 pots, key with the watchman.', createdAtMin: -200, sup: [0, 0] },
+  { id: 'seed-ask-02', type: 'ask', at: chapel, tag: chapel, title: 'Reliable electrician for a fan and two switches?',
+    body: 'Please share a number on WhatsApp if you know one.', createdAtMin: -1100, sup: [1, 0] },
+  { id: 'seed-ask-03', type: 'ask', at: linking, tag: linking, title: 'Can someone help my mother set up UPI?',
+    body: 'She is 72 and nervous about it. Happy to pay for half an hour of your time.', createdAtMin: -2600, sup: [0, 2] },
 
-  // ---- Area updates by Push The Pin (2) ----
-  { id: 'seed-area-01', type: 'area', postedAs: 'ptp', at: bandra, tag: bandra, topic: 'water', radiusM: 900, title: 'No water supply',
-    body: 'Planned pipeline repair work. Please store water tonight.',
-    createdAtMin: -300, startsAt: { day: 'tomorrow', h: 10 }, endsAt: { day: 'tomorrow', h: 18 }, endsAtOriginal: { day: 'tomorrow', h: 16 }, sup: [0, 0] },
-  { id: 'seed-area-02', type: 'area', postedAs: 'ptp', at: hill, tag: hill, topic: 'power', radiusM: 600, title: 'Power cut',
-    body: 'Maintenance work on the feeder line. Supply should be back this evening.',
-    createdAtMin: -240, startsAt: { min: -90 }, endsAt: { min: 150 }, endsAtOriginal: { min: 150 }, sup: [0, 0] },
+  // ---- Notice by Push The Pin (real date) ----
+  { id: 'real-area-01', type: 'area', postedAs: 'ptp', at: bandra, tag: bandra, topic: 'festival', radiusM: 6000, title: 'Navratri',
+    body: 'Sharad Navratri runs Sunday 11 to Monday 19 October, Dussehra on 20 October. Expect garba nights and busier evenings.',
+    createdAtIso: '2026-10-06T09:00:00+05:30', startsAt: IST('2026-10-11T00:00'), endsAt: IST('2026-10-19T23:59'),
+    sourceUrl: 'https://gulfnews.com/lifestyle/when-is-navratri-2026-and-what-colour-to-wear-each-day-1.500693264', sourceLabel: 'Festival dates', sup: [0, 0] },
 ]
 
 const DEVICES = Array.from({ length: 20 }, (_, i) => `seed-dev-${i + 1}`)
@@ -189,7 +164,7 @@ const pins: SeedPin[] = []
 const supports: SeedSupport[] = []
 for (const s of specs) {
   const { lat, lng } = jitter(s.id, s.at)
-  const tag = s.tag ?? (s.postedAs === 'place' || s.type === 'event' ? s.at : undefined)
+  const tag = s.tag ?? ((s.postedAs ?? 'neighbour') !== 'neighbour' || s.type === 'event' ? s.at : undefined)
   pins.push({
     id: s.id,
     type: s.type,
@@ -205,7 +180,10 @@ for (const s of specs) {
     endsAtOriginal: s.endsAtOriginal ?? null,
     radiusM: s.radiusM ?? null,
     topic: s.topic ?? null,
-    createdAtMin: s.createdAtMin,
+    createdAtMin: s.createdAtMin ?? 0,
+    createdAtIso: s.createdAtIso ?? null,
+    sourceUrl: s.sourceUrl ?? null,
+    sourceLabel: s.sourceLabel ?? null,
     createdBy: 'seed',
     postedAs: s.postedAs ?? 'neighbour',
     status: 'active',
@@ -222,7 +200,7 @@ for (const s of specs) {
 }
 
 const seedFile: SeedFile = {
-  source: 'Places API (New) Text Search, cached in scripts/.cache. Times are offsets from now; see materialise.ts.',
+  source: 'Places API (New) Text Search, cached in scripts/.cache. Real items carry fixed ISO times and sourceUrl (docs/REAL_DATA.md); demo neighbour posts use offsets from now.',
   pins,
   supports,
 }

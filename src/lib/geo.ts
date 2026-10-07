@@ -26,3 +26,10 @@ export function walkMin(a: LatLng, b: LatLng): number {
 export function formatWalk(min: number): string {
   return `~${Math.max(1, Math.round(min))} min walk`
 }
+
+/** Figma distance format: metres under a kilometre ("650 m"), one decimal above it ("1.2 km"). Rounded to 10 m. */
+export function formatDistance(a: LatLng, b: LatLng): string {
+  const m = distanceM(a, b)
+  if (m < 1000) return `${Math.max(10, Math.round(m / 10) * 10)} m`
+  return `${(m / 1000).toFixed(1)} km`
+}

@@ -1,7 +1,7 @@
 // Frozen store API (Phase 0). Agents read/write through these actions only.
 // Change requests go to the lead.
 import { create } from 'zustand'
-import type { Bounds, Filter, LatLng, Pin, SheetHeight, Support } from '../types'
+import type { Bounds, Filter, LatLng, NearbyPlace, Pin, SheetHeight, Support } from '../types'
 
 /** Bandra West (Ward H-West). Centre given in docs/IMPLEMENTATION.md Gate 0. */
 export const BANDRA_WEST: LatLng = { lat: 19.0596, lng: 72.8295 }
@@ -45,6 +45,8 @@ export interface AppState {
   pins: Pin[]
   supports: Support[]
   deviceId: string | null
+  /** Real places from Google within the walk radius (context layer, not content). */
+  places: NearbyPlace[]
 
   // filters and selection
   filter: Filter
@@ -71,6 +73,7 @@ export interface AppState {
   // actions
   setPins(pins: Pin[]): void
   setSupports(supports: Support[]): void
+  setPlaces(places: NearbyPlace[]): void
   setDeviceId(id: string): void
   setFilter(f: Filter): void
   /** Select a pin. fly=true (card tap) also flies the map to it. */
@@ -101,6 +104,7 @@ export const useStore = create<AppState>()((set, get) => ({
   pins: [],
   supports: [],
   deviceId: null,
+  places: [],
 
   filter: 'all',
   selectedPinId: null,
@@ -121,8 +125,10 @@ export const useStore = create<AppState>()((set, get) => ({
 
   setPins: (pins) => set({ pins }),
   setSupports: (supports) => set({ supports }),
+  setPlaces: (places) => set({ places }),
   setDeviceId: (deviceId) => set({ deviceId }),
-  setFilter: (filter) => set({ filter }),
+  /** Tapping the selected chip again clears it (no chip = everything). */
+  setFilter: (filter) => set((st) => ({ filter: st.filter === filter ? 'all' : filter })),
   selectPin: (id, opts) => {
     set({ selectedPinId: id })
     if (id && opts?.fly) {

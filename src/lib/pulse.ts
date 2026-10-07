@@ -6,6 +6,8 @@ export const EVENT_SOON_MS = 2 * 60 * 60 * 1000
 const HOUR = 60 * 60 * 1000
 const DAY = 24 * HOUR
 export const MIN_PULSE_ITEMS = 5
+/** Upcoming events show in Pulse for this far ahead. */
+export const EVENT_HORIZON_MS = 7 * DAY
 /** Hour (local time) that counts as "the previous evening" for the sinceLastNight fallback. */
 export const LAST_NIGHT_HOUR = 18
 
@@ -51,20 +53,14 @@ export function previousEvening(now: number): number {
   return d.getTime()
 }
 
-function endOfToday(now: number): number {
-  const d = new Date(now)
-  d.setHours(23, 59, 59, 999)
-  return d.getTime()
-}
-
 /** Does the pin qualify for Pulse for activity since `since`? (docs/DECISIONS.md "Pulse feed composition") */
 function qualifies(pin: Pin, supports: Support[], since: number, now: number): boolean {
   if (pin.createdAt >= since) return true
   if (lastSupportTime(pin, supports) >= since) return true
   if (pin.type === 'event' && pin.startsAt != null) {
     const end = eventEnd(pin) as number
-    // not ended, and starting before the end of today
-    return end >= now && pin.startsAt <= endOfToday(now)
+    // not ended, and starting within the next 7 days (real listings are posted days ahead)
+    return end >= now && pin.startsAt <= now + EVENT_HORIZON_MS
   }
   return false
 }

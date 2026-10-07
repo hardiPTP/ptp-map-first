@@ -20,6 +20,15 @@ export const QUERIES: { slug: string; q: string; kind: 'venue' | 'street' }[] = 
   { slug: 'street-chapel-road', q: 'Chapel Road, Bandra West, Mumbai', kind: 'street' },
   { slug: 'street-carter-road', q: 'Carter Road, Bandra West, Mumbai', kind: 'street' },
   { slug: 'street-bandra-west', q: 'Bandra West, Mumbai', kind: 'street' },
+  // Real venues of the researched listings (docs/REAL_DATA.md)
+  { slug: 'v-chimbai', q: 'Chimbai Village Theatre, Chimbai, Bandra West, Mumbai', kind: 'venue' },
+  { slug: 'v-borabora', q: 'Bora Bora, Waterfield Road, Bandra West, Mumbai', kind: 'venue' },
+  { slug: 'v-corona', q: 'Corona Garden, St John Baptist Road, Mount Mary, Bandra West, Mumbai', kind: 'venue' },
+  { slug: 'v-fort', q: 'Bandra Fort, Bandstand, Bandra West, Mumbai', kind: 'venue' },
+  { slug: 'v-acropolis', q: 'New Acropolis, 15th Road, Bandra West, Mumbai', kind: 'venue' },
+  { slug: 'v-balgandharva', q: 'Bal Gandharva Rang Mandir, Bandra West, Mumbai', kind: 'venue' },
+  { slug: 'v-kcc', q: 'Khar Comedy Club, Linking Road, Khar West, Mumbai', kind: 'venue' },
+  { slug: 'v-reclamation', q: 'Bandra Reclamation football ground, Bandra West, Mumbai', kind: 'venue' },
 ]
 
 const CENTER = { latitude: 19.0596, longitude: 72.8295 }

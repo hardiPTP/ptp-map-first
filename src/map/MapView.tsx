@@ -48,7 +48,7 @@ function centreFor(map: google.maps.Map, target: google.maps.LatLngLiteral, zoom
 
 /** Screen y offset (px) of the visible band's middle from the map's middle. */
 function bandDy(map: google.maps.Map): number {
-  const top = cssPx('--top-bar-h', 156)
+  const top = cssPx('--top-bar-h', 112)
   const sheet = cssPx('--sheet-offset', 0)
   const h = map.getDiv().clientHeight
   return (top + (h - sheet)) / 2 - h / 2

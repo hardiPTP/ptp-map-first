@@ -141,7 +141,7 @@ export function MapTags() {
     const div = map.getDiv()
     const w = div.clientWidth
     const h = div.clientHeight
-    const top = cssPx('--top-bar-h', 156)
+    const top = cssPx('--top-bar-h', 112)
     const bottom = h - cssPx('--sheet-offset', 0)
     const centreScreen = { x: w / 2, y: (top + bottom) / 2 }
     const at = (p: { lat: number; lng: number }) => toScreen(p, viewport.center, viewport.zoom, centreScreen)

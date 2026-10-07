@@ -8,7 +8,8 @@
   padding: 0; border: 0; background: none; cursor: pointer; color: var(--surface-paper);
 }
 .map-mk::after { content: ''; position: absolute; inset: -6px -8px; } /* 44px touch target */
-.map-mk--event { --mk: var(--colour-state-green); }
+/* Colour rule (Figma pin/map): orange = open problem only. Events, places, notices are ink. */
+.map-mk--event { --mk: var(--colour-ink-100); }
 .map-mk--ask { --mk: var(--colour-ink-100); color: var(--colour-ink-100); }
 
 .map-mk__disc {
@@ -17,9 +18,7 @@
   border-radius: var(--radius-pill); background: var(--mk); border: 2px solid var(--surface-paper);
   box-shadow: var(--elev-marker);
 }
-.map-mk--civic .map-mk__disc { border-radius: calc(var(--radius-media-inner) / 2); }
 .map-mk--ask .map-mk__disc { background: var(--surface-paper); border-color: var(--colour-ink-100); }
-.map-mk.is-place .map-mk__disc { box-shadow: 0 0 0 2px var(--colour-accent-orange), var(--elev-marker); }
 .map-mk__stalk { position: absolute; left: 17px; top: 35px; width: 2px; height: 10px; background: var(--mk); }
 .map-mk__tip { position: absolute; left: 15.5px; top: 45px; width: 5px; height: 5px; border-radius: 50%; background: var(--mk); }
 
@@ -36,7 +35,6 @@
   border: 2px solid var(--mk); border-radius: var(--radius-pill); opacity: 0; pointer-events: none;
   animation: map-pulse 2.2s ease-out infinite;
 }
-.map-mk--civic .map-mk__pulse { border-radius: calc(var(--radius-media-inner) / 2); }
 .map-mk.is-selected .map-mk__pulse { left: 11px; top: 11px; }
 @keyframes map-pulse { 0% { transform: scale(1); opacity: 0.35; } 100% { transform: scale(2.1); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .map-mk__pulse { animation: none; } }
@@ -49,3 +47,23 @@
 }
 .map-you { position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; pointer-events: none; }
 .map-you img { display: block; }
+
+/* Real places from Google: quiet context dots, never competing with pins. */
+.map-place {
+  position: absolute; left: -6px; top: -6px; display: flex; align-items: center; gap: 5px;
+  padding: 0; border: 0; background: none; cursor: pointer; white-space: nowrap;
+}
+.map-place::before { content: ''; position: absolute; left: -13px; top: -13px; width: 38px; height: 38px; } /* touch target */
+.map-place__dot {
+  width: 10px; height: 10px; box-sizing: border-box; flex: none;
+  border-radius: var(--radius-pill); background: var(--colour-ink-45); border: 1.5px solid var(--surface-paper);
+  box-shadow: 0 1px 2px rgba(23, 20, 15, 0.2);
+}
+.map-place__name {
+  font: 400 11.5px/14px var(--font-text); color: var(--colour-ink-80);
+  text-shadow: 0 0 2px var(--surface-paper), 0 0 2px var(--surface-paper), 0 0 3px var(--surface-paper);
+}
+.map-place.is-selected .map-place__dot { width: 14px; height: 14px; margin: -2px; background: var(--colour-ink-100); border-width: 2px; }
+.map-place.is-selected .map-place__name { color: var(--colour-ink-100); }
+.map-place:focus-visible { outline: none; }
+.map-place:focus-visible .map-place__dot { box-shadow: var(--focus-ring); }

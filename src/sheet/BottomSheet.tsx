@@ -6,9 +6,9 @@ import { Grabber, SheetSurface } from '../design/primitives'
 import { useStore } from '../store'
 import type { SheetHeight } from '../types'
 
-const HALF_FRACTION = 0.62 // Gate 3: room for the area strip plus one whole card
+const HALF_FRACTION = 0.48 // 2026-10-07 review: 0.62 left the map a strip; cards are compact now
 /** Fallback for the agent D top bar height; tune with --top-bar-h on :root. */
-const TOP_BAR_FALLBACK = 156
+const TOP_BAR_FALLBACK = 112
 const MAP_STRIP_PX = 56
 const TAP_SLOP = 6
 const FLICK_PROJECT_MS = 160

@@ -3,10 +3,16 @@
 import type { Pin } from '../types.ts'
 
 /** Minutes from now (negative = past), or a wall-clock time on a named IST day. */
-export type RelTime = { min: number } | { day: 'today' | 'tomorrow' | 'sat' | 'sun'; h: number; m?: number }
+export type RelTime =
+  | { min: number }
+  | { day: 'today' | 'tomorrow' | 'sat' | 'sun'; h: number; m?: number }
+  /** A real, fixed date and time (ISO 8601 with offset), for items taken from listings and reports. */
+  | { iso: string }
 
 export type SeedPin = Omit<Pin, 'createdAt' | 'startsAt' | 'endsAt' | 'endsAtOriginal' | 'lastSupportAt'> & {
   createdAtMin: number
+  /** Fixed creation time for real items (report or listing date). Wins over createdAtMin. */
+  createdAtIso?: string | null
   startsAt?: RelTime | null
   endsAt?: RelTime | null
   endsAtOriginal?: RelTime | null

@@ -3,18 +3,39 @@ import { useMapsLibrary } from '@vis.gl/react-google-maps'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Chip, Icon } from '../design/primitives'
-import { AREA_NAME, useStore } from '../store'
+import { useStore } from '../store'
+import { isLive } from '../lib/pulse'
 import type { Filter, Pin } from '../types'
 import { DEBOUNCE_MS, MIN_CHARS, SearchSession, type PlaceSuggestion } from './autocomplete'
-import { AccountSheet, AreaSheet } from './Sheets'
+import { AccountSheet } from './Sheets'
 import './top.css'
 
-const CHIPS: { value: Filter; label: string }[] = [
-  { value: 'all', label: 'All' },
+// Figma map chips: no "All" chip. None selected = everything; each chip isolates one layer.
+const CHIPS: { value: Exclude<Filter, 'all'>; label: string }[] = [
   { value: 'civic', label: 'Issues' },
   { value: 'event', label: 'Events' },
   { value: 'ask', label: 'Asks' },
+  { value: 'places', label: 'Places' },
 ]
+
+const readNow = () => Date.now()
+
+/** What is in view right now, per chip. Recomputed on map idle (viewport) and data changes only. */
+function useChipCounts(): Record<Exclude<Filter, 'all'>, number> {
+  const pins = useStore((s) => s.pins)
+  const supports = useStore((s) => s.supports)
+  const places = useStore((s) => s.places)
+  const b = useStore((s) => s.viewport.bounds)
+  return useMemo(() => {
+    const now = readNow()
+    const inView = (p: { lat: number; lng: number }) =>
+      !b || (p.lat <= b.north && p.lat >= b.south && p.lng >= b.west && p.lng <= b.east)
+    const c = { civic: 0, event: 0, ask: 0, places: 0 }
+    for (const p of pins) if (p.type !== 'area' && inView(p) && isLive(p, supports, now)) c[p.type]++
+    c.places = places.filter(inView).length
+    return c
+  }, [pins, supports, places, b])
+}
 
 export function filterOurPins(pins: Pin[], q: string): Pin[] {
   const n = q.trim().toLowerCase()
@@ -23,18 +44,6 @@ export function filterOurPins(pins: Pin[], q: string): Pin[] {
     .filter((p) => p.type !== 'area' && p.status === 'active')
     .filter((p) => p.title.toLowerCase().includes(n) || (p.placeName ?? '').toLowerCase().includes(n))
     .slice(0, 5)
-}
-
-function Masthead({ onOpen }: { onOpen: () => void }) {
-  const areaMode = useStore((s) => s.areaMode)
-  return (
-    <button type="button" className="top-masthead" onClick={onOpen} aria-haspopup="dialog">
-      <span className="top-masthead__line">
-        <span className="top-masthead__name">{areaMode === 'nearMe' ? 'Near me' : AREA_NAME}</span>
-        <Icon name="masthead-chevron-down-18" size={18} />
-      </span>
-    </button>
-  )
 }
 
 function SearchBar({ onAccount }: { onAccount: () => void }) {
@@ -106,8 +115,8 @@ function SearchBar({ onAccount }: { onAccount: () => void }) {
           inputMode="search"
           enterKeyHint="search"
           autoComplete="off"
-          placeholder="Search places, events, issues"
-          aria-label="Search places, events, issues"
+          placeholder="Places, pins, events"
+          aria-label="Search places, pins and events"
           value={q}
           onFocus={() => setOpen(true)}
           onChange={(e) => { setQ(e.target.value); setOpen(true); if (!e.target.value) end() }}
@@ -154,22 +163,21 @@ function SearchBar({ onAccount }: { onAccount: () => void }) {
 export function TopBar() {
   const filter = useStore((s) => s.filter)
   const setFilter = useStore((s) => s.setFilter)
-  const [sheet, setSheet] = useState<'area' | 'account' | null>(null)
+  const counts = useChipCounts()
+  const [sheet, setSheet] = useState<'account' | null>(null)
   return (
     <header className="top-bar">
-      <Masthead onOpen={() => setSheet('area')} />
       <SearchBar onAccount={() => setSheet('account')} />
-      <div className="top-chips" role="radiogroup" aria-label="Filter">
+      <div className="top-chips" role="group" aria-label="Show on the map">
         {CHIPS.map((c) => (
-          <Chip key={c.value} selected={filter === c.value} onClick={() => setFilter(c.value)}>
+          <Chip key={c.value} selected={filter === c.value} count={counts[c.value]} onClick={() => setFilter(c.value)}>
             {c.label}
           </Chip>
         ))}
       </div>
-      {sheet === 'area' && <AreaSheet onClose={() => setSheet(null)} />}
       {sheet === 'account' && <AccountSheet onClose={() => setSheet(null)} />}
     </header>
   )
 }
 
-export { AccountSheet } from './Sheets'
+export { AccountSheet, AreaSheet } from './Sheets'

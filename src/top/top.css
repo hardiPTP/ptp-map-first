@@ -1,8 +1,8 @@
-/* Top bar. Tokens only. Heights: 12 + 28 + 10 + 48 + 10 + 44 + 4 = 156. */
+/* Top bar. Tokens only. Heights: 12 + 46 + 10 + 36 + 8 = 112 (no masthead line; the area lives in the sheet heading). */
 .top-bar {
   position: relative;
   display: flex; flex-direction: column; gap: 10px;
-  padding: 12px 0 4px;
+  padding: 12px 0 8px;
 }
 .top-masthead {
   align-self: flex-start;
@@ -24,7 +24,7 @@
 .top-search {
   position: relative; z-index: 2;
   display: flex; align-items: center; gap: 10px;
-  height: 48px; padding: 0 4px 0 18px;
+  height: 46px; padding: 0 3px 0 18px;
   border-radius: var(--radius-pill);
   background: var(--surface-canvas); box-shadow: var(--elev-press-s);
   color: var(--colour-ink-80);
@@ -32,7 +32,7 @@
 .top-search:focus-within { box-shadow: var(--elev-press-s), var(--focus-ring); }
 .top-search__input {
   flex: 1; min-width: 0; height: 44px; border: 0; background: transparent; padding: 0;
-  font: var(--text-body-lg); color: var(--colour-ink-100); outline: none;
+  font: 300 14px/20px var(--font-text); color: var(--colour-ink-100); outline: none; /* Figma map search placeholder: Light 14 */
   -webkit-appearance: none; appearance: none;
 }
 .top-search__input { text-overflow: ellipsis; }
@@ -55,7 +55,7 @@
 .top-search__dismiss { position: fixed; inset: 100px 0 0 0; z-index: 44; border: 0; background: transparent; }
 .top-results {
   /* portalled to body so it sits above the sheet (z 20); below account/area sheets (z 50). Top = 12+28+10+48+6. */
-  position: fixed; z-index: 45; left: var(--space-margin); right: var(--space-margin); top: 104px;
+  position: fixed; z-index: 45; left: var(--space-margin); right: var(--space-margin); top: 66px;
   max-height: min(60dvh, 460px); overflow-y: auto;
   padding: 6px; border-radius: var(--radius-card);
   background: var(--surface-paper); box-shadow: var(--elev-raise);
@@ -73,7 +73,7 @@
 .top-results__none { margin: 0; padding: 14px 12px; font: var(--text-meta-lg); color: var(--colour-ink-60); }
 
 .top-chips {
-  display: flex; gap: 8px; padding: 4px var(--space-margin) 8px; margin: -4px 0 -8px;
+  display: flex; gap: 6px; padding: 4px var(--space-margin) 6px; margin: -4px 0 -6px;
   overflow-x: auto; scrollbar-width: none;
 }
 .top-chips::-webkit-scrollbar { display: none; }

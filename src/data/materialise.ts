@@ -8,6 +8,7 @@ const IST = 330 * MIN // India has no DST, so a fixed offset is exact.
 
 export function resolveTime(t: RelTime, now: number): number {
   if ('min' in t) return now + t.min * MIN
+  if ('iso' in t) return Date.parse(t.iso)
   const istNow = now + IST
   const midnightIst = Math.floor(istNow / DAY) * DAY // start of today in IST, as shifted-UTC
   const dow = new Date(istNow).getUTCDay() // 0 = Sunday
@@ -58,7 +59,7 @@ export function materialise(seed: SeedFile, now: number): { pins: Pin[]; support
   const lastByPin = new Map<string, number>()
   for (const s of supports) lastByPin.set(s.pinId, Math.max(lastByPin.get(s.pinId) ?? 0, s.createdAt))
   const pins: Pin[] = seed.pins.map((p) => {
-    const { createdAtMin, startsAt, endsAt, endsAtOriginal, ...rest } = p
+    const { createdAtMin, createdAtIso, startsAt, endsAt, endsAtOriginal, ...rest } = p
     let start = startsAt ? resolveTime(startsAt, now) : null
     let end = endsAt ? resolveTime(endsAt, now) : null
     if (p.type === 'event' && start != null && startsAt && 'min' in startsAt) {
@@ -69,7 +70,7 @@ export function materialise(seed: SeedFile, now: number): { pins: Pin[]; support
     }
     return {
       ...rest,
-      createdAt: now + createdAtMin * MIN,
+      createdAt: createdAtIso ? Date.parse(createdAtIso) : now + createdAtMin * MIN,
       startsAt: start,
       endsAt: end,
       endsAtOriginal: endsAtOriginal

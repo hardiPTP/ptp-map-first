@@ -34,13 +34,15 @@ export function buildFeed(args: {
   deviceId?: string | null
 }): FeedResult {
   const { pins, supports, filter, bounds, searchPlaceId, origin, now, deviceId } = args
-  const base = pins.filter((p) => p.type !== 'area' && (filter === 'all' || p.type === filter))
+  // A picked place lists every pin there, even when the Places chip is on.
+  const f: Filter = searchPlaceId && filter === 'places' ? 'all' : filter
+  const base = pins.filter((p) => p.type !== 'area' && (f === 'all' || p.type === f))
   let items: Pin[]
   let mode: FeedResult['mode']
   if (searchPlaceId) {
     items = base.filter((p) => p.placeId === searchPlaceId && isLive(p, supports, now))
     mode = 'search'
-  } else if (filter !== 'all') {
+  } else if (f !== 'all') {
     // A type chip lists every live pin of that type in view, not only the Pulse window
     // (lead decision at Gate 1, docs/DECISIONS.md).
     items = base.filter((p) => inBounds(p, bounds) && isLive(p, supports, now))

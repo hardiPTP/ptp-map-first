@@ -1,34 +1,63 @@
-// Feed card. PRD "Pin types and the card": poster+type+walk, title, when, place, one action + WhatsApp.
-// Never renders a user name: poster labels only (Neighbour / Place / Push The Pin).
+// Feed card, Figma card/update + card/event anatomy (docs/figma/SPEC.md section 1):
+// meta row (place left, distance or date right), title, when row (events), one action with its count beside it,
+// and a source line at the foot. Never renders a user name: Neighbour / the place / Push The Pin only.
 import { memo, type MouseEvent } from 'react'
-import { Button, Card, Icon, NeighbourLabel, PlaceLabel, PtpLabel, ShellButton } from '../design/primitives'
-import { formatWalk, walkMin } from '../lib/geo'
+import { Button, Icon, ShellButton } from '../design/primitives'
+import { formatDistance } from '../lib/geo'
 import { repo } from '../data'
 import { useStore } from '../store'
 import type { LatLng, Pin } from '../types'
-import { ago, daysOpen, directionsUrl, eventWhen, openWhatsapp } from './format'
+import { clock, dayLabel, eventWhen, openWhatsapp } from './format'
 
-const TYPE_LABEL = { civic: 'Issue', event: 'Event', ask: 'Ask', area: 'Update' } as const
 const ACTION_LABEL = { civic: 'I see it too', event: "I'm going", ask: 'I can help', area: '' } as const
-const COUNT_WORD = { civic: 'see it', event: 'going', ask: 'can help', area: '' } as const
+const ACTION_ICON = { civic: 'ic-checkcircle', event: 'calendar-check-off', ask: 'ic-bubble', area: 'ic-check' } as const
 
-/** Nearest street: the data model has no street field, so it is only shown if a pin carries one. */
-function streetOf(pin: Pin): string | null {
-  const s = (pin as Pin & { street?: string | null }).street
-  return s || null
+export function countText(pin: Pin, n: number): string | null {
+  if (pin.type === 'ask') return n === 0 ? 'No replies yet' : n === 1 ? '1 can help' : `${n} can help`
+  if (n === 0) return null
+  if (pin.type === 'event') return `${n} going`
+  return n === 1 ? '1 neighbour sees it' : `${n} neighbours see it`
+}
+
+/** Posted time for civic and asks: "Today, 6:10pm" within two days, else "27 Aug". Never elapsed time (Figma). */
+export function postedText(pin: Pin, now: number): string {
+  if (now - pin.createdAt < 2 * 60_000) return 'Just now' // PRD "Creating a pin" step 6
+  const label = dayLabel(pin.createdAt, now)
+  return label === 'Today' || label === 'Yesterday' ? `${label}, ${clock(pin.createdAt)}` : label
 }
 
 export function whenText(pin: Pin, now: number): string {
-  // PRD "Creating a pin" 6: a new card reads "Just now"; events keep their start time after it.
   if (pin.type === 'event' && pin.startsAt != null)
     return now - pin.createdAt < 2 * 60_000 ? `Just now · ${eventWhen(pin.startsAt, now)}` : eventWhen(pin.startsAt, now)
-  return ago(pin.createdAt, now)
+  return postedText(pin, now)
 }
 
 export function shareText(pin: Pin, now: number): string {
-  const where = pin.placeName || streetOf(pin)
-  const lines = [pin.title, [whenText(pin, now), where].filter(Boolean).join(', '), `Push The Pin, ${location.origin}`]
+  const lines = [pin.title, [whenText(pin, now), pin.placeName].filter(Boolean).join(', '), `Push The Pin, ${location.origin}`]
   return lines.join('\n')
+}
+
+function SourceLine({ pin }: { pin: Pin }) {
+  if (pin.postedAs === 'neighbour')
+    return (
+      <div className="sheet-card__source">
+        <Icon name="source-dot-ink25" size={6} tint={false} />
+        Neighbour
+      </div>
+    )
+  const words = pin.postedAs === 'place' ? 'Posted by the place' : pin.sourceLabel ?? 'Push The Pin'
+  return (
+    <div className="sheet-card__source">
+      <Icon name="source-dot-orange" size={6} tint={false} />
+      {pin.sourceUrl ? (
+        <a href={pin.sourceUrl} target="_blank" rel="noopener noreferrer">
+          {words}
+        </a>
+      ) : (
+        words
+      )}
+    </div>
+  )
 }
 
 interface Props {
@@ -54,68 +83,43 @@ export const PinCard = memo(function PinCard({ pin, origin, now, count, supporte
   const toggle = () => {
     repo.toggleSupport(pin.id).catch(() => {})
   }
-  const walk = formatWalk(walkMin(origin, pin))
-  const where = pin.placeName || streetOf(pin)
-  const showWhere = where && !(pin.postedAs === 'place' && where === pin.placeName)
-  const open_ = pin.type === 'civic' ? daysOpen(pin.createdAt, now) : 0
+  const where = pin.placeName ?? 'Bandra West'
+  const right = pin.type === 'event' ? formatDistance(origin, pin) : postedText(pin, now)
+  const counted = countText(pin, count)
 
   return (
-    <Card
-      as="article"
-      edge={pin.postedAs === 'ptp' ? 'ptp' : undefined}
-      className={['sheet-card', highlighted && 'is-highlighted'].filter(Boolean).join(' ')}
+    <article
+      className={['ptp-card', 'sheet-card', highlighted && 'is-highlighted'].filter(Boolean).join(' ')}
       data-pin-id={pin.id}
       onClick={onCardClick}
     >
-      <div className="sheet-card__head">
-        <div className="sheet-card__poster">
-          {pin.postedAs === 'place' ? (
-            <PlaceLabel name={pin.placeName || 'Place'} photoUri={pin.placePhotoUri} />
-          ) : pin.postedAs === 'ptp' ? (
-            <PtpLabel />
-          ) : (
-            <NeighbourLabel style="line" />
-          )}
-        </div>
-        <span className="sheet-card__type">
-          · {TYPE_LABEL[pin.type]} · {walk}
+      <div className="sheet-card__meta">
+        <span className="sheet-card__where">
+          <span className="sheet-card__where-name">{where}</span>
+          {pin.postedAs === 'place' && <Icon name="verified" size={15} tint={false} />}
         </span>
+        <span className="sheet-card__right">{right}</span>
       </div>
       <h3 className="sheet-card__title">
         <button type="button" className="sheet-card__open" onClick={open}>
           {pin.title}
         </button>
       </h3>
-      <div className="sheet-card__when">
-        <span className="sheet-card__when-main">
-          {pin.type === 'event' && <Icon name="calendar-when" size={18} tint={false} />}
+      {pin.type === 'event' && pin.startsAt != null && (
+        <div className="sheet-card__when">
+          <Icon name="calendar-when" size={18} tint={false} />
           {whenText(pin, now)}
-        </span>
-        {pin.type === 'civic' && open_ >= 1 && (
-          <span className="sheet-card__extra">Open {open_ === 1 ? '1 day' : `${open_} days`}</span>
-        )}
-        {pin.type === 'event' && (
-          <a className="sheet-card__link" href={directionsUrl(pin)} target="_blank" rel="noopener noreferrer">
-            <Icon name="ic-directions" size={16} />
-            Directions
-          </a>
-        )}
-      </div>
-      {showWhere && <div className="sheet-card__place">{where}</div>}
+        </div>
+      )}
+      {pin.type === 'civic' && pin.body && <p className="sheet-card__body">{pin.body}</p>}
       <div className="sheet-card__actions">
-        <Button variant={supported ? 'soft' : 'quiet'} pressed={supported} icon="ic-checkcircle" onClick={toggle}>
+        <Button variant={supported ? 'soft' : 'quiet'} pressed={supported} icon={ACTION_ICON[pin.type]} onClick={toggle}>
           {ACTION_LABEL[pin.type]}
         </Button>
-        <span className="sheet-card__count">
-          {count} {COUNT_WORD[pin.type]}
-        </span>
-        <ShellButton
-          icon="ic-whatsapp"
-          label="Share on WhatsApp"
-          variant="quiet"
-          onClick={() => openWhatsapp(shareText(pin, now))}
-        />
+        <span className="sheet-card__count">{counted}</span>
+        <ShellButton icon="ic-whatsapp" label="Share on WhatsApp" variant="quiet" onClick={() => openWhatsapp(shareText(pin, now))} />
       </div>
-    </Card>
+      <SourceLine pin={pin} />
+    </article>
   )
 })

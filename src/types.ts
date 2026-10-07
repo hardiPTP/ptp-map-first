@@ -4,7 +4,7 @@
 export type PinType = 'civic' | 'event' | 'ask' | 'area'
 export type PostedAs = 'neighbour' | 'place' | 'ptp'
 export type PinStatus = 'active' | 'hidden'
-export type AreaTopic = 'water' | 'power' | 'traffic' | 'road'
+export type AreaTopic = 'water' | 'power' | 'traffic' | 'road' | 'festival'
 
 /** All times are epoch milliseconds. */
 export interface Pin {
@@ -35,6 +35,10 @@ export interface Pin {
   postedAs: PostedAs
   status: PinStatus
   seed?: boolean
+  /** Where a curated item came from (a public listing or a news report). Shown on the card's source line. */
+  sourceUrl?: string | null
+  /** Short words for the source line, e.g. "Listing on allevents.in". */
+  sourceLabel?: string | null
 }
 
 /** Area updates are pins with type "area", postedAs "ptp". They never appear in the feed or as markers. */
@@ -60,8 +64,20 @@ export interface Bounds {
   west: number
 }
 
-/** Filter chip values. "all" plus the three user-facing pin types. */
-export type Filter = 'all' | 'civic' | 'event' | 'ask'
+/** Filter chip values. "all" = no chip selected. "places" isolates the Google places layer. */
+export type Filter = 'all' | 'civic' | 'event' | 'ask' | 'places'
+
+/** A real place from Google Places (New) Nearby Search, shown as a quiet context dot on the map. */
+export interface NearbyPlace {
+  id: string
+  name: string
+  lat: number
+  lng: number
+  /** Google's primary type in words, e.g. "Cafe", "Park". */
+  kind: string | null
+  /** True / false when Google returned opening hours, null when unknown. */
+  openNow: boolean | null
+}
 
 export type SheetHeight = 'peek' | 'half' | 'full'
 

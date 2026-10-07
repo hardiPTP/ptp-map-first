@@ -62,16 +62,19 @@ describe('format', () => {
 
 describe('headerCopy', () => {
   const feed = (nearCount: number, mode: 'last3h' | 'sinceLastNight' = 'last3h') => ({ nearCount, mode, items: [] as Pin[] })
-  it('area mode', () =>
+  it('area mode: the heading names the area, the sub line counts', () =>
     expect(headerCopy({ feed: feed(14), areaMode: 'area', searchName: null })).toEqual({
-      title: '14 things within a 10 min walk today', sub: 'Showing Bandra West',
+      title: 'in Bandra West', sub: '14 things within a 10 min walk',
     }))
-  it('near me', () => expect(headerCopy({ feed: feed(1), areaMode: 'nearMe', searchName: null })).toEqual({ title: '1 thing within a 10 min walk today', sub: null }))
-  it('since last night', () => {
-    expect(headerCopy({ feed: feed(3, 'sinceLastNight'), areaMode: 'nearMe', searchName: null }).sub).toBe('Since last night')
-    expect(headerCopy({ feed: feed(3, 'sinceLastNight'), areaMode: 'area', searchName: null }).sub).toBe('Showing Bandra West, since last night')
-  })
-  it('zero', () => expect(headerCopy({ feed: feed(0), areaMode: 'nearMe', searchName: null }).title).toBe('Nothing new within a 10 min walk'))
+  it('near me', () =>
+    expect(headerCopy({ feed: feed(1), areaMode: 'nearMe', searchName: null })).toEqual({ title: 'near you', sub: '1 thing within a 10 min walk' }))
+  it('since last night', () =>
+    expect(headerCopy({ feed: feed(3, 'sinceLastNight'), areaMode: 'area', searchName: null }).sub).toBe('3 things within a 10 min walk, since last night'))
+  it('zero', () => expect(headerCopy({ feed: feed(0), areaMode: 'nearMe', searchName: null }).sub).toBe('Nothing new within a 10 min walk'))
+  it('places chip counts places', () =>
+    expect(headerCopy({ feed: feed(2), areaMode: 'area', searchName: null, placesCount: 59 }).sub).toBe('59 places within a 10 min walk, from Google'))
+  it('a picked place', () =>
+    expect(headerCopy({ feed: { ...feed(0), items: [] }, areaMode: 'area', searchName: 'Candies' })).toEqual({ title: 'Candies', sub: 'Nothing posted here yet' }))
 })
 
 describe('buildFeed', () => {
@@ -89,10 +92,11 @@ describe('buildFeed', () => {
     const a = pin({ placeId: 'X' }); const b = pin({ placeId: 'Y', createdAt: now - 100 * H })
     expect(buildFeed({ ...base, pins: [a, b], searchPlaceId: 'X' }).items).toEqual([a])
   })
-  it('events chip lists upcoming events beyond today', () => {
+  it('upcoming events this week show in Pulse; the events chip lists them all', () => {
     const e = pin({ type: 'event', startsAt: now + 72 * H, createdAt: now - 30 * H })
-    expect(buildFeed({ ...base, pins: [e], filter: 'event' }).items).toEqual([e])
-    expect(buildFeed({ ...base, pins: [e] }).items).toEqual([])
+    const later = pin({ type: 'event', startsAt: now + 10 * 24 * H, createdAt: now - 30 * H })
+    expect(buildFeed({ ...base, pins: [e, later], filter: 'event' }).items).toEqual([e, later])
+    expect(buildFeed({ ...base, pins: [e, later] }).items).toEqual([e])
   })
   it('counts items within the 800 m ring', () => {
     const near = pin(); const far = pin({ lat: 1.02 })
@@ -101,18 +105,22 @@ describe('buildFeed', () => {
 })
 
 describe('PinCard', () => {
-  it('shows poster, type, walk, title, button and never the creator id', () => {
+  it('Figma anatomy: place and distance, title, when, action with count, source line; never the creator id', () => {
     const p = pin({ type: 'event', startsAt: now + 3 * H, placeName: 'Synthetic Hall' })
     const { container } = render(<PinCard pin={p} origin={origin} now={now} count={4} supported={false} />)
-    expect(screen.getByText('Neighbour')).toBeInTheDocument()
-    expect(screen.getByText(/Event · ~1 min walk/)).toBeInTheDocument()
+    expect(screen.getByText('Synthetic Hall')).toBeInTheDocument()
+    expect(screen.getByText('10 m')).toBeInTheDocument()
     expect(screen.getByText('Synthetic title')).toBeInTheDocument()
     expect(screen.getByText('Today, 5pm')).toBeInTheDocument()
-    expect(screen.getByText('Synthetic Hall')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: "I'm going" })).toHaveAttribute('aria-pressed', 'false')
     expect(screen.getByText('4 going')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Directions/ })).toBeInTheDocument()
+    expect(screen.getByText('Neighbour')).toBeInTheDocument()
     expect(container.textContent).not.toContain('device-secret-id')
+  })
+  it('a curated item shows its source as a link', () => {
+    const p = pin({ type: 'civic', postedAs: 'ptp', sourceUrl: 'https://example.org/report', sourceLabel: 'Reported by Example News' })
+    render(<PinCard pin={p} origin={origin} now={now} count={0} supported={false} />)
+    expect(screen.getByRole('link', { name: 'Reported by Example News' })).toHaveAttribute('href', 'https://example.org/report')
   })
   it('action button toggles support and does not open the detail', () => {
     render(<PinCard pin={pin({ type: 'civic' })} origin={origin} now={now} count={0} supported />)
@@ -131,9 +139,13 @@ describe('PinCard', () => {
     expect(useStore.getState().detailPinId).toBe(p.id)
     expect(useStore.getState().flyTo).not.toBeNull()
   })
-  it('just now for under a minute', () => {
+  it('just now for under two minutes, then the posted time, never elapsed time', () => {
     render(<PinCard pin={pin({ createdAt: now - 5000 })} origin={origin} now={now} count={0} supported={false} />)
     expect(screen.getByText('Just now')).toBeInTheDocument()
+    cleanup()
+    render(<PinCard pin={pin({ createdAt: now - 2 * H })} origin={origin} now={now} count={0} supported={false} />)
+    expect(screen.getByText('Today, 12pm')).toBeInTheDocument()
+    expect(screen.getByText('No replies yet')).toBeInTheDocument()
   })
 })
 
@@ -145,7 +157,7 @@ describe('AreaStrip', () => {
     expect(activeAreaUpdates([ok, expired, far], [], { lat: 20, lng: 80 }, now).map((p) => p.id).sort()).toEqual([ok.id, far.id].sort())
     expect(activeAreaUpdates([far], [], BANDRA_WEST, now)).toEqual([])
   })
-  it('renders nothing when empty, 3 rows plus +N more, extended, and select + share', () => {
+  it('renders nothing when empty, 3 rows plus N more, extended, and select + share', () => {
     const { container, rerender } = render(<AreaStrip origin={BANDRA_WEST} now={now} />)
     expect(container).toBeEmptyDOMElement()
     const rows = [1, 2, 3, 4, 5].map((i) => area({ title: `Notice ${i}`, startsAt: now + i }))
@@ -153,12 +165,12 @@ describe('AreaStrip', () => {
     useStore.setState({ pins: rows })
     rerender(<AreaStrip origin={BANDRA_WEST} now={now} />)
     expect(screen.getAllByRole('button', { pressed: false })).toHaveLength(3)
-    expect(screen.getByText('Extended')).toBeInTheDocument()
-    fireEvent.click(screen.getByText('+2 more'))
+    expect(screen.getByText(/\(extended\)/)).toBeInTheDocument()
+    fireEvent.click(screen.getByText('2 more notices'))
     expect(screen.getByText('Notice 5')).toBeInTheDocument()
     fireEvent.click(screen.getByText('Notice 1'))
     expect(useStore.getState().selectedAreaId).toBe(rows[0].id)
-    expect(screen.getByText('Share on WhatsApp')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Share' })).toBeInTheDocument()
     fireEvent.click(screen.getByText('Notice 1'))
     expect(useStore.getState().selectedAreaId).toBeNull()
   })

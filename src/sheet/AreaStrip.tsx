@@ -1,7 +1,8 @@
-// "In your area" strip. PRD "Area updates": PTP mark + accent orange edge, max 3 rows, "+N more",
-// tap a row to tint the area on the map and offer Share on WhatsApp.
+// Notices from Push The Pin, at the top of Pulse. Figma "source" rule: a confirmed source is a 6px orange dot and
+// grey words, never a coloured edge, so a run of notices reads as small dots, not orange lines.
+// One well row per notice (icon, fact, when, source line). Max 3, "+N more". Tap a row: tint the area, offer share.
 import { useMemo, useState } from 'react'
-import { Button, Card, Icon, PtpLabel } from '../design/primitives'
+import { Button, Icon } from '../design/primitives'
 import { distanceM } from '../lib/geo'
 import { isLive } from '../lib/pulse'
 import { BANDRA_WEST, useStore } from '../store'
@@ -13,6 +14,7 @@ const TOPIC_ICON: Record<AreaTopic, string> = {
   power: 'ic-bulb',
   traffic: 'ic-warn',
   road: 'ic-footpath',
+  festival: 'calendar-when',
 }
 const MAX_ROWS = 3
 
@@ -27,6 +29,16 @@ export function activeAreaUpdates(pins: Pin[], supports: Support[], origin: LatL
     .sort((a, b) => (a.startsAt ?? a.createdAt) - (b.startsAt ?? b.createdAt))
 }
 
+const dayMonth = (t: number) => new Intl.DateTimeFormat('en-IN', { weekday: 'short', day: 'numeric', month: 'short' }).format(t)
+
+/** Multi-day notices read as a date range; same-day ones keep the clock times. */
+function noticeWhen(p: Pin, now: number): string {
+  if (p.startsAt != null && p.endsAt != null && p.endsAt - p.startsAt > 24 * 3600_000) {
+    return p.startsAt <= now ? `Until ${dayMonth(p.endsAt)}` : `${dayMonth(p.startsAt)} to ${dayMonth(p.endsAt)}`
+  }
+  return areaWhen(p, now)
+}
+
 export function AreaStrip({ origin, now }: { origin: LatLng; now: number }) {
   const pins = useStore((s) => s.pins)
   const supports = useStore((s) => s.supports)
@@ -39,40 +51,48 @@ export function AreaStrip({ origin, now }: { origin: LatLng; now: number }) {
   const more = rows.length - shown.length
 
   return (
-    <Card as="div" edge="ptp" className="sheet-area" aria-label="In your area">
-      <div className="sheet-area__head">
-        <PtpLabel />
-        <span className="sheet-area__head-sub">In your area</span>
-      </div>
-      <ul className="sheet-area__list">
+    <section className="sheet-notices" aria-label="Notices for this area">
+      <ul className="sheet-notices__list">
         {shown.map((p) => {
           const selected = selectedAreaId === p.id
-          const when = areaWhen(p, now)
-          const text = [p.title, when, isExtended(p) ? 'Extended' : ''].filter(Boolean).join('\n')
+          const when = noticeWhen(p, now)
           return (
             <li key={p.id}>
               <button
                 type="button"
-                className={['sheet-area__row', selected && 'is-selected'].filter(Boolean).join(' ')}
+                className={['sheet-notice', selected && 'is-selected'].filter(Boolean).join(' ')}
                 aria-pressed={selected}
                 onClick={() => selectArea(selected ? null : p.id)}
               >
-                <span className="sheet-area__icon">
-                  <Icon name={TOPIC_ICON[p.topic ?? 'road']} size={20} />
-                </span>
-                <span className="sheet-area__text">
-                  <span className="sheet-area__title">{p.title}</span>
-                  <span className="sheet-area__when">
-                    {when}
-                    {isExtended(p) && <span className="sheet-area__ext">Extended</span>}
+                <Icon name={TOPIC_ICON[p.topic ?? 'road']} size={18} />
+                <span className="sheet-notice__text">
+                  <span className="sheet-notice__title">
+                    {p.title}
+                    <span className="sheet-notice__when">
+                      {', '}
+                      {when}
+                      {isExtended(p) && ' (extended)'}
+                    </span>
+                  </span>
+                  <span className="sheet-notice__source">
+                    <Icon name="source-dot-orange" size={6} tint={false} />
+                    Push The Pin{p.sourceLabel ? `, ${p.sourceLabel.toLowerCase()}` : ''}
                   </span>
                 </span>
               </button>
               {selected && (
-                <div className="sheet-area__share">
-                  <Button variant="quiet" icon="ic-whatsapp" onClick={() => openWhatsapp(`${text}\nPush The Pin, Bandra West`)}>
-                    Share on WhatsApp
-                  </Button>
+                <div className="sheet-notice__more">
+                  {p.body && <p className="sheet-notice__body">{p.body}</p>}
+                  <div className="sheet-notice__actions">
+                    <Button variant="quiet" icon="ic-whatsapp" onClick={() => openWhatsapp(`${p.title}, ${when}\n${p.body ?? ''}\nPush The Pin`)}>
+                      Share
+                    </Button>
+                    {p.sourceUrl && (
+                      <a className="sheet-notice__link" href={p.sourceUrl} target="_blank" rel="noopener noreferrer">
+                        Source
+                      </a>
+                    )}
+                  </div>
                 </div>
               )}
             </li>
@@ -80,10 +100,10 @@ export function AreaStrip({ origin, now }: { origin: LatLng; now: number }) {
         })}
       </ul>
       {more > 0 && (
-        <button type="button" className="sheet-area__more" onClick={() => setExpanded(true)}>
-          +{more} more
+        <button type="button" className="sheet-notices__more" onClick={() => setExpanded(true)}>
+          {more} more {more === 1 ? 'notice' : 'notices'}
         </button>
       )}
-    </Card>
+    </section>
   )
 }

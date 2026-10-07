@@ -81,12 +81,13 @@ describe('pulseWindow', () => {
     expect(pulseWindow([c], [sup(c.id, H)], now).items).toHaveLength(1)
     expect(pulseWindow([c], [], now).items).toHaveLength(0)
   })
-  it('an event later today qualifies, tomorrow does not, ended does not', () => {
+  it('events in the coming week qualify; further out or ended do not', () => {
     const today = pin({ type: 'event', startsAt: new Date(2030, 5, 15, 19, 0).getTime() })
     const tomorrow = pin({ type: 'event', startsAt: new Date(2030, 5, 16, 10, 0).getTime() })
+    const nextMonth = pin({ type: 'event', startsAt: now + 30 * 24 * H })
     const gone = pin({ type: 'event', startsAt: now - 6 * H })
-    const ids = pulseWindow([today, tomorrow, gone], [], now).items.map((p) => p.id)
-    expect(ids).toEqual([today.id])
+    const ids = pulseWindow([today, tomorrow, nextMonth, gone], [], now).items.map((p) => p.id)
+    expect(ids.sort()).toEqual([today.id, tomorrow.id].sort())
   })
   it('excludes area updates and hidden pins', () => {
     const items = pulseWindow([pin({ type: 'area', createdAt: now }), pin({ status: 'hidden', createdAt: now })], [], now).items

@@ -77,10 +77,11 @@
   --text-micro: 300 12px/16px var(--font-text);
 
   /*
-   * Type size OVERRIDE tokens: the ONLY sanctioned deviation (PRD "Calls made" 6,
-   * design/tokens.json type_override_for_this_prototype). The app uses these for body, meta and labels.
+   * Type OVERRIDE tokens (PRD "Calls made" 6), revised 2026-10-07 after review: the first pass (16/14/15 at
+   * weight 500) read as oversized and off-system. These stay on the Figma scale and only lift what fails for
+   * eyes over 45: Light 300 becomes Regular 400 (Figma: nothing heavier than 400), body +1px, meta +0.5px.
    */
-  --text-body-lg: 400 16px/24px var(--font-text);
-  --text-meta-lg: 400 14px/20px var(--font-text);
-  --text-label-lg: 500 15px/20px var(--font-text);
+  --text-body-lg: 400 14.5px/22px var(--font-text);
+  --text-meta-lg: 400 13px/18px var(--font-text);
+  --text-label-lg: 400 14px/20px var(--font-text);
 }

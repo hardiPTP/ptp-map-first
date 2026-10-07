@@ -86,22 +86,27 @@ export function ShellButton({
   )
 }
 
-/** Figma "chip/filter" (3539:2975). PRD: 44px tall, one active at a time. */
+/**
+ * Map chip (Figma map · resting, "mapfilters"): label plus a count badge. One may be selected at a time;
+ * none selected means everything shows. Pressing the selected chip again clears it, so it is a toggle.
+ */
 export function Chip({
   selected,
+  count,
   children,
   className,
   ...rest
-}: ButtonHTMLAttributes<HTMLButtonElement> & { selected?: boolean }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { selected?: boolean; count?: number }) {
   return (
     <button
       type="button"
-      role="radio"
-      aria-checked={!!selected}
+      // In a radiogroup (create flow day chips) a chip is a radio; elsewhere it is a toggle.
+      {...(rest.role === 'radio' ? { 'aria-checked': !!selected } : { 'aria-pressed': !!selected })}
       {...rest}
       className={['ptp-chip', selected && 'is-selected', className].filter(Boolean).join(' ')}
     >
       {children}
+      {count != null && <span className="ptp-chip__count">{count}</span>}
     </button>
   )
 }

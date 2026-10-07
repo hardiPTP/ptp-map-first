@@ -62,23 +62,27 @@ img.ptp-icon { background: none; }
 .ptp-shell--accent:active { background: var(--colour-accent-orange); box-shadow: var(--elev-press-orange); }
 .ptp-shell:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
-/* ---------- Chip (Figma chip/filter 3539:2975), 44px tall per PRD ---------- */
+/* ---------- Chip: Figma map chips (map · resting 4465:5893, "mapfilters"): label + count badge ---------- */
 .ptp-chip {
+  position: relative;
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: var(--space-touch-min);
-  padding: 0 18px;
-  border: 0; border-radius: var(--radius-pill);
-  background: var(--surface-canvas);
-  box-shadow: var(--elev-press-s);
-  color: var(--colour-ink-80);
-  font: var(--text-label-lg);
+  height: 36px;
+  padding: 0 9px 0 12px;
+  border: 1px solid var(--colour-accent-orange-soft); border-radius: var(--radius-pill);
+  background: var(--surface-paper);
+  box-shadow: 0 2px 4px rgba(23, 20, 15, 0.14); /* RAW in Figma map chips (SPEC.md section 4) */
+  color: var(--colour-ink-100);
+  font: 400 12.5px/1 var(--font-text);
   white-space: nowrap;
 }
-.ptp-chip.is-selected {
-  background: var(--colour-accent-orange-deep);
-  box-shadow: var(--elev-press-orange);
-  color: var(--colour-accent-cream);
+.ptp-chip::after { content: ''; position: absolute; inset: -4px 0; } /* 44px touch target */
+.ptp-chip__count {
+  min-width: 18px; padding: 2px 5px; box-sizing: border-box; border-radius: var(--radius-pill);
+  background: var(--surface-well); color: var(--colour-ink-100);
+  font: 400 11px/14px var(--font-text); text-align: center; font-variant-numeric: tabular-nums;
 }
+.ptp-chip.is-selected { background: var(--colour-accent-orange); border-color: var(--colour-accent-orange); color: var(--surface-paper); }
+.ptp-chip.is-selected .ptp-chip__count { background: var(--surface-paper); color: var(--colour-accent-orange); }
 .ptp-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* ---------- Card shell (Figma card/update 3576:1359) ---------- */
@@ -91,8 +95,8 @@ img.ptp-icon { background: none; }
   box-shadow: var(--elev-raise);
   list-style: none;
 }
-/* Push The Pin posts: accent orange edge (PRD "Who posted it"); 2px = Figma rail stroke weight. */
-.ptp-card--ptp { box-shadow: inset 2px 0 0 var(--colour-accent-orange), var(--elev-raise); }
+/* Figma source rule: confirmed sources show a 6px dot, never a coloured edge. Kept as a no-op for callers. */
+.ptp-card--ptp { box-shadow: var(--elev-raise); }
 
 /* ---------- Tag (map tag: symbol + short value) ---------- */
 .ptp-tag {

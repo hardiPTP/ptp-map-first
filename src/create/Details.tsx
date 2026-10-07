@@ -125,13 +125,13 @@ export function Details({ onBack, onPosted, fromPlacing }: { onBack: () => void;
         <div className="create-block">
           <span className="create-label">When</span>
           <div className="create-chips" role="radiogroup" aria-label="Day">
-            <Chip selected={day === 'today'} onClick={() => (setNow(Date.now()), setDay('today'))}>
+            <Chip role="radio" selected={day === 'today'} onClick={() => (setNow(Date.now()), setDay('today'))}>
               Today
             </Chip>
-            <Chip selected={day === 'tomorrow'} onClick={() => setDay('tomorrow')}>
+            <Chip role="radio" selected={day === 'tomorrow'} onClick={() => setDay('tomorrow')}>
               Tomorrow
             </Chip>
-            <Chip selected={day === 'date'} onClick={() => setDay('date')}>
+            <Chip role="radio" selected={day === 'date'} onClick={() => setDay('date')}>
               Pick a date
             </Chip>
           </div>
