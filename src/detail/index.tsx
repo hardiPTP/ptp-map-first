@@ -116,7 +116,7 @@ function Sheet({ pin, now }: { pin: Pin; now: number }) {
         )}
       </div>
       <div className="detail-sheet__actions">
-        <Button variant="soft" pressed={supported} icon="ic-checkcircle" onClick={toggle}>
+        <Button variant={supported ? 'soft' : 'quiet'} pressed={supported} icon="ic-checkcircle" onClick={toggle}>
           {ACTION_LABEL[pin.type]}
         </Button>
         <span className="detail-sheet__count">

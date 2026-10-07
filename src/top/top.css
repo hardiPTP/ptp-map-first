@@ -113,3 +113,6 @@
 }
 .top-mine__title { font: var(--text-body-lg); color: var(--colour-ink-100); }
 .top-mine__meta { font: var(--text-meta-lg); color: var(--colour-ink-60); }
+.top-setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.top-setting__text { display: flex; flex-direction: column; gap: 2px; font: var(--text-body-lg); }
+.top-setting__text .top-note { margin: 0; }

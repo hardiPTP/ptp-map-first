@@ -42,7 +42,8 @@
 }
 
 /* ---------- Area strip ---------- */
-.sheet-area { flex: none; display: flex; flex-direction: column; gap: 4px; padding: var(--space-card-pad); }
+.sheet-area { flex: none; display: flex; flex-direction: column; gap: 2px; padding: 12px var(--space-card-pad) 8px; }
+.sheet-area__head-sub { margin-left: auto; font: var(--text-meta-lg); color: var(--colour-ink-60); }
 .sheet-area__head {
   display: flex; align-items: center; gap: 8px;
   padding: 0 var(--space-card-inset);
@@ -51,7 +52,7 @@
 .sheet-area__list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
 .sheet-area__row {
   display: flex; align-items: center; gap: 12px; width: 100%; min-height: var(--space-touch-min);
-  padding: 8px var(--space-card-inset); border: 0; border-radius: var(--radius-well);
+  padding: 6px var(--space-card-inset); border: 0; border-radius: var(--radius-well);
   background: transparent; text-align: left; color: var(--colour-ink-100);
 }
 .sheet-area__row.is-selected { background: var(--surface-well); box-shadow: var(--elev-press-s); }
@@ -59,12 +60,12 @@
 .sheet-area__icon {
   display: inline-flex; align-items: center; justify-content: center; flex: none;
   width: 36px; height: 36px; border-radius: var(--radius-pill);
-  background: var(--colour-accent-orange-soft); color: var(--colour-accent-orange-deep);
+  background: var(--surface-well); color: var(--colour-ink-80); /* ink, not orange: colour rule (REVIEW #8) */
 }
 .sheet-area__text { display: flex; flex-direction: column; min-width: 0; }
 .sheet-area__title { font: var(--text-body-lg); }
 .sheet-area__when { font: var(--text-meta-lg); color: var(--colour-ink-60); }
-.sheet-area__ext { margin-left: 8px; color: var(--colour-accent-orange-deep); }
+.sheet-area__ext { margin-left: 8px; color: var(--colour-ink-100); text-decoration: underline; } /* colour rule: words stay ink (REVIEW #8) */
 .sheet-area__share { padding: 4px var(--space-card-inset) 8px 52px; }
 .sheet-area__more {
   align-self: flex-start; min-height: var(--space-touch-min); padding: 0 var(--space-card-inset);
@@ -75,7 +76,8 @@
 .sheet-feed { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: var(--space-card-gap); }
 .sheet-feed__item { margin: 0; }
 .sheet-card { cursor: pointer; }
-.sheet-card.is-highlighted { box-shadow: 0 0 0 var(--stroke) var(--colour-ink-25), var(--elev-raise); }
+/* Highlight is shown on the map marker only; Figma cards take depth from the shadow pair, never a border (REVIEW #4). */
+.sheet-card.is-highlighted { box-shadow: var(--elev-raise); }
 .sheet-card__head {
   display: flex; align-items: center; justify-content: flex-start; gap: 6px;
   padding: 0 var(--space-card-inset);

@@ -178,3 +178,13 @@ describe('buildFeed: just posted by this device goes first (lead, Gate 2)', () =
     expect(r2.items[0].id).toBe('other')
   })
 })
+
+describe('whenText: "Just now" for a fresh event (Gate 3)', () => {
+  it('prefixes Just now for 2 minutes, then shows only the start time', async () => {
+    const { whenText } = await import('../../src/sheet/PinCard')
+    const now = Date.parse('2026-10-08T10:00:00+05:30')
+    const ev = { id: 'e', type: 'event' as const, title: 't', lat: 0, lng: 0, createdAt: now - 30_000, createdBy: 'd', postedAs: 'neighbour' as const, status: 'active' as const, startsAt: now + 3 * 3600_000 }
+    expect(whenText(ev, now)).toMatch(/^Just now · /)
+    expect(whenText({ ...ev, createdAt: now - 5 * 60_000 }, now)).not.toMatch(/Just now/)
+  })
+})

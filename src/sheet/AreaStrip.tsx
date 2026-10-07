@@ -1,7 +1,7 @@
 // "In your area" strip. PRD "Area updates": PTP mark + accent orange edge, max 3 rows, "+N more",
 // tap a row to tint the area on the map and offer Share on WhatsApp.
 import { useMemo, useState } from 'react'
-import { Button, Card, Icon, PtpMark } from '../design/primitives'
+import { Button, Card, Icon, PtpLabel } from '../design/primitives'
 import { distanceM } from '../lib/geo'
 import { isLive } from '../lib/pulse'
 import { BANDRA_WEST, useStore } from '../store'
@@ -41,8 +41,8 @@ export function AreaStrip({ origin, now }: { origin: LatLng; now: number }) {
   return (
     <Card as="div" edge="ptp" className="sheet-area" aria-label="In your area">
       <div className="sheet-area__head">
-        <PtpMark size={20} />
-        <span>In your area</span>
+        <PtpLabel />
+        <span className="sheet-area__head-sub">In your area</span>
       </div>
       <ul className="sheet-area__list">
         {shown.map((p) => {

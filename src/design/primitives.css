@@ -120,8 +120,12 @@ img.ptp-icon { background: none; }
 .ptp-poster { display: inline-flex; align-items: center; gap: 7px; min-width: 0; font: var(--text-meta-lg); color: var(--colour-ink-80); }
 .ptp-poster__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ptp-poster__avatar {
-  flex: none; width: 20px; height: 20px; border-radius: var(--radius-pill);
+  flex: none; width: 24px; height: 24px; border-radius: var(--radius-pill);
   object-fit: cover; background: var(--surface-well);
+}
+.ptp-poster__avatar--initial {
+  display: inline-flex; align-items: center; justify-content: center;
+  font: var(--text-meta-lg); line-height: 1; color: var(--colour-ink-80);
 }
 .ptp-mark {
   display: inline-flex; align-items: center; justify-content: center; flex: none;

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { Field, Grabber, Icon, SheetSurface } from '../design/primitives'
+import { Button, Field, Grabber, Icon, SheetSurface } from '../design/primitives'
 import { distanceM } from '../lib/geo'
 import { requestLocation } from '../lib/locate'
 import { AREA_NAME, BANDRA_WEST, DEFAULT_ZOOM, useStore } from '../store'
@@ -106,6 +106,7 @@ export function AccountSheet({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState(loadName)
   const pins = useStore((s) => s.pins)
   const deviceId = useStore((s) => s.deviceId)
+  const locationStatus = useStore((s) => s.locationStatus)
   const mine = deviceId ? pins.filter((p) => p.createdBy === deviceId && p.type !== 'area' && p.status === 'active') : []
   mine.sort((a, b) => b.createdAt - a.createdAt)
 
@@ -134,6 +135,29 @@ export function AccountSheet({ onClose }: { onClose: () => void }) {
             </li>
           ))}
         </ul>
+      )}
+      {/* PRD "Search bar": the photo opens account, my pins and settings. */}
+      <h3 className="top-sheet__sub">Settings</h3>
+      <div className="top-setting">
+        <span className="top-setting__text">
+          <span>Location</span>
+          <span className="top-note">
+            {locationStatus === 'granted' ? 'Shared while the app is open' : locationStatus === 'denied' ? 'Not allowed on this phone' : 'Not shared yet'}
+          </span>
+        </span>
+        {locationStatus !== 'granted' && locationStatus !== 'denied' && (
+          <Button variant="quiet" onClick={async () => {
+            const loc = await requestLocation()
+            if (loc) {
+              const s = useStore.getState()
+              s.setAreaMode('nearMe')
+              s.requestFlyTo({ ...loc, zoom: 16 })
+            }
+          }}>Use my location</Button>
+        )}
+      </div>
+      {name && (
+        <Button variant="quiet" onClick={() => { setName(''); saveName('') }}>Forget my name on this phone</Button>
       )}
     </Sheet>
   )

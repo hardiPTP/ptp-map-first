@@ -94,7 +94,7 @@
 .detail-sheet__fact-main { display: inline-flex; align-items: center; gap: 9px; font: 400 16px/20px var(--font-text); color: var(--colour-ink-100); }
 .detail-sheet__link {
   display: inline-flex; align-items: center; gap: 6px; min-height: var(--space-touch-min);
-  color: var(--colour-accent-orange-deep); text-decoration: none; font: var(--text-label-lg);
+  color: var(--colour-ink-100); text-decoration: underline; font: var(--text-label-lg); /* ink link (Figma masthead link rule; REVIEW #8) */
 }
 .detail-sheet__actions { display: flex; align-items: center; gap: 14px; }
 .detail-sheet__count { flex: 1; font: var(--text-meta-lg); color: var(--colour-ink-60); }

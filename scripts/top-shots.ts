@@ -1,0 +1,17 @@
+// Recapture top-bar screenshots (Phase 3). One live autocomplete session (3 requests) for top-search.
+import { chromium } from '@playwright/test'
+const b = await chromium.launch()
+const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true })
+await p.goto('http://localhost:5173/'); await p.waitForSelector('.sheet-card'); await p.waitForTimeout(3500)
+await p.screenshot({ path: 'docs/screens/top-home.png' })
+await p.getByRole('button', { name: 'Your account' }).click(); await p.waitForTimeout(600)
+await p.getByLabel(/your name/i).fill('Asha Verma'); await p.waitForTimeout(300)
+await p.screenshot({ path: 'docs/screens/top-account.png' })
+await p.keyboard.press('Escape'); await p.waitForTimeout(400)
+await p.locator('.top-masthead, [aria-haspopup], button:has-text("Bandra West")').first().click(); await p.waitForTimeout(600)
+await p.screenshot({ path: 'docs/screens/top-area-sheet.png' })
+await p.keyboard.press('Escape'); await p.waitForTimeout(400)
+const search = p.getByPlaceholder('Search places, events, issues')
+await search.click(); await search.pressSequentially('yoga', { delay: 120 }); await p.waitForTimeout(1500)
+await p.screenshot({ path: 'docs/screens/top-search.png' })
+await b.close(); console.log('ok')

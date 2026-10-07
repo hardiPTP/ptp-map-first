@@ -19,7 +19,9 @@ function streetOf(pin: Pin): string | null {
 }
 
 export function whenText(pin: Pin, now: number): string {
-  if (pin.type === 'event' && pin.startsAt != null) return eventWhen(pin.startsAt, now)
+  // PRD "Creating a pin" 6: a new card reads "Just now"; events keep their start time after it.
+  if (pin.type === 'event' && pin.startsAt != null)
+    return now - pin.createdAt < 2 * 60_000 ? `Just now · ${eventWhen(pin.startsAt, now)}` : eventWhen(pin.startsAt, now)
   return ago(pin.createdAt, now)
 }
 
@@ -101,7 +103,7 @@ export const PinCard = memo(function PinCard({ pin, origin, now, count, supporte
       </div>
       {showWhere && <div className="sheet-card__place">{where}</div>}
       <div className="sheet-card__actions">
-        <Button variant="soft" pressed={supported} icon="ic-checkcircle" onClick={toggle}>
+        <Button variant={supported ? 'soft' : 'quiet'} pressed={supported} icon="ic-checkcircle" onClick={toggle}>
           {ACTION_LABEL[pin.type]}
         </Button>
         <span className="sheet-card__count">

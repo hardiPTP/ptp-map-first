@@ -155,9 +155,12 @@ export function PlaceLabel({ name, photoUri }: { name: string; photoUri?: string
   return (
     <span className="ptp-poster">
       {photoUri ? (
-        <img className="ptp-poster__avatar" src={photoUri} alt="" width={20} height={20} referrerPolicy="no-referrer" />
+        <img className="ptp-poster__avatar" src={photoUri} alt="" width={24} height={24} referrerPolicy="no-referrer" />
       ) : (
-        <span className="ptp-poster__avatar" aria-hidden />
+        // No Google photo for this place: its initial, so the avatar is never a blank circle.
+        <span className="ptp-poster__avatar ptp-poster__avatar--initial" aria-hidden>
+          {name.trim().charAt(0).toUpperCase()}
+        </span>
       )}
       <span className="ptp-poster__name">{name}</span>
       <Icon name="verified" size={17} tint={false} />

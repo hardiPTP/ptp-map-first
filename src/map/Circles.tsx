@@ -32,11 +32,12 @@ export function Circles() {
       ...base,
       visible: false,
       radius: 1,
-      strokeColor: token('--colour-accent-orange', '#e4491c'),
-      strokeOpacity: 0.5,
+      // Ink, not orange: on the map orange means an open problem only (Figma colour rule; REVIEW #8).
+      strokeColor: token('--colour-ink-100', '#17140f'),
+      strokeOpacity: 0.45,
       strokeWeight: 1.5,
-      fillColor: token('--colour-accent-orange', '#e4491c'),
-      fillOpacity: 0.12,
+      fillColor: token('--colour-ink-100', '#17140f'),
+      fillOpacity: 0.1,
       zIndex: 2,
     })
     return () => {

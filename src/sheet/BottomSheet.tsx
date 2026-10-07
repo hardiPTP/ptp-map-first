@@ -6,7 +6,7 @@ import { Grabber, SheetSurface } from '../design/primitives'
 import { useStore } from '../store'
 import type { SheetHeight } from '../types'
 
-const HALF_FRACTION = 0.58
+const HALF_FRACTION = 0.62 // Gate 3: room for the area strip plus one whole card
 /** Fallback for the agent D top bar height; tune with --top-bar-h on :root. */
 const TOP_BAR_FALLBACK = 156
 const MAP_STRIP_PX = 56

@@ -66,7 +66,8 @@ function Symbol({ content }: { content: TagContent }) {
     case 'clock':
       return <Icon name="ic-clock" size={14} />
     case 'avatar':
-      return <span className="map-tag__avatar" aria-hidden />
+      // No Google place photos in this build (DECISIONS.md): show the event clock rather than an empty circle.
+      return <Icon name="ic-clock" size={14} />
     case 'hand':
       return <Icon name="ic-heart" size={14} />
     default:
@@ -116,6 +117,8 @@ export function MapTags() {
   const filter = useStore((s) => s.filter)
   // Pins arriving (first load, a new post) also need tags; support counts alone do not trigger.
   const pinKey = useStore((s) => s.pins.length)
+  // While placing a new pin the map belongs to that task: no tags under the place-name label (REVIEW #10).
+  const creating = useStore((s) => s.create.step !== 'idle')
 
   useEffect(() => {
     if (!map) return
@@ -160,7 +163,9 @@ export function MapTags() {
       if (!tc || (!inBand(pt) && !sel)) continue
       // At zoom 13 and below only cluster counts show (plus the selected pin's tag).
       if (viewport.zoom <= 13 && !sel) continue
-      candidates.push({ id: p.id, lat: p.lat, lng: p.lng, content: tc.content, urgency: tc.urgency, box: pinTagBox(pt, sel, tc.content.value), markerBox: mb })
+      const box = pinTagBox(pt, sel, tc.content.value)
+      if (!sel && (box.x < 0 || box.x + box.w > w)) continue // never clip a tag at the screen edge (REVIEW #15)
+      candidates.push({ id: p.id, lat: p.lat, lng: p.lng, content: tc.content, urgency: tc.urgency, box, markerBox: mb })
       info.set(p.id, { id: p.id, lat: p.lat, lng: p.lng, content: tc.content, selected: sel })
     }
     for (const c of clusters) {
@@ -185,6 +190,6 @@ export function MapTags() {
     overlayRef.current?.draw()
   })
 
-  if (!host) return null
+  if (!host || creating) return null
   return createPortal(shown.map((t) => <TagButton key={t.id} t={t} />), host)
 }
