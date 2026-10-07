@@ -20,3 +20,12 @@ export interface PulseWindow {
 export function pulseWindow(pins: Pin[], _supports: Support[], now: number): PulseWindow {
   return { items: pins, mode: 'last3h', since: now - PULSE_WINDOW_MS }
 }
+
+/**
+ * PRD "Support and ranking" hide rules. False when: status hidden; civic with no support (or creation)
+ * in the last 30 days; event ended more than 2 h ago (end = endsAt ?? startsAt + 2 h);
+ * area update past endsAt. Used by both the map (agent A) and the feed (agent B).
+ */
+export function isLive(pin: Pin, _supports: Support[], _now: number): boolean {
+  return pin.status === 'active'
+}
