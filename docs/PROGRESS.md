@@ -58,7 +58,7 @@ Gate 2: typecheck pass, lint pass, unit 127/127 + 1 lead test, rules 14/14, buil
 
 Gate 3: typecheck, lint, unit 128/128, build pass; REVIEW.md has no unjustified fails.
 
-## Phase 4: BLOCKED on the human (Firebase)
+## Phase 4: ON HOLD (human chose local-only for now, 2026-10-07)
 
 No VITE_FIREBASE_* values in .env and no `firebase login`. Everything is built and verified on the emulators (`npm run e2e:emulator`, 9/9). To deploy:
 1. `npx firebase login`
