@@ -30,8 +30,10 @@ export function buildFeed(args: {
   searchPlaceId: string | null
   origin: LatLng
   now: number
+  /** This device; its pins posted in the last 10 minutes go to the top (PRD "Creating a pin" step 6). */
+  deviceId?: string | null
 }): FeedResult {
-  const { pins, supports, filter, bounds, searchPlaceId, origin, now } = args
+  const { pins, supports, filter, bounds, searchPlaceId, origin, now, deviceId } = args
   const base = pins.filter((p) => p.type !== 'area' && (filter === 'all' || p.type === filter))
   let items: Pin[]
   let mode: FeedResult['mode']
@@ -49,11 +51,16 @@ export function buildFeed(args: {
     mode = w.mode
   }
   items = rankPins(items, supports, origin, now)
+  if (deviceId) {
+    const mineNew = (p: Pin) => p.createdBy === deviceId && now - p.createdAt < JUST_POSTED_MS
+    items = [...items.filter(mineNew).sort((a, b) => b.createdAt - a.createdAt), ...items.filter((p) => !mineNew(p))]
+  }
   const nearCount = items.filter((p) => distanceM(origin, p) <= WALK_RING_M).length
   return { items, nearCount, mode, now, origin }
 }
 
 const readNow = () => Date.now()
+const JUST_POSTED_MS = 10 * 60 * 1000
 
 export function useFeed(): FeedResult {
   const pins = useStore((s) => s.pins)
@@ -61,10 +68,11 @@ export function useFeed(): FeedResult {
   const filter = useStore((s) => s.filter)
   const bounds = useStore((s) => s.viewport.bounds)
   const searchPlace = useStore((s) => s.searchPlace)
+  const deviceId = useStore((s) => s.deviceId)
   const origin = useOrigin()
   // "now" is read when the data or view changes; no timers anywhere.
   return useMemo(
-    () => buildFeed({ pins, supports, filter, bounds, searchPlaceId: searchPlace?.placeId ?? null, origin, now: readNow() }),
-    [pins, supports, filter, bounds, searchPlace, origin],
+    () => buildFeed({ pins, supports, filter, bounds, searchPlaceId: searchPlace?.placeId ?? null, origin, now: readNow(), deviceId }),
+    [pins, supports, filter, bounds, searchPlace, origin, deviceId],
   )
 }

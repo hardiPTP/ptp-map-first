@@ -163,3 +163,18 @@ describe('AreaStrip', () => {
     expect(useStore.getState().selectedAreaId).toBeNull()
   })
 })
+
+describe('buildFeed: just posted by this device goes first (lead, Gate 2)', () => {
+  it('puts own pin posted < 10 min ago at the top regardless of score', async () => {
+    const { buildFeed } = await import('../../src/sheet/useFeed')
+    const now = 1_000_000_000_000
+    const o = { lat: 0, lng: 0 }
+    const base = { title: 'x', status: 'active' as const, postedAs: 'neighbour' as const, type: 'ask' as const }
+    const far = { ...base, id: 'mine', lat: 0.02, lng: 0, createdAt: now - 60_000, createdBy: 'dev-me' }
+    const near = { ...base, id: 'other', lat: 0, lng: 0, createdAt: now - 60_000, createdBy: 'dev-x' }
+    const r = buildFeed({ pins: [near, far], supports: [], filter: 'all', bounds: null, searchPlaceId: null, origin: o, now, deviceId: 'dev-me' })
+    expect(r.items.map((p) => p.id)).toEqual(['mine', 'other'])
+    const r2 = buildFeed({ pins: [near, far], supports: [], filter: 'all', bounds: null, searchPlaceId: null, origin: o, now, deviceId: 'dev-x' })
+    expect(r2.items[0].id).toBe('other')
+  })
+})
