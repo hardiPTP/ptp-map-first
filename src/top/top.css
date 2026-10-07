@@ -35,7 +35,8 @@
   font: var(--text-body-lg); color: var(--colour-ink-100); outline: none;
   -webkit-appearance: none; appearance: none;
 }
-.top-search__input::placeholder { color: var(--colour-ink-45); }
+.top-search__input { text-overflow: ellipsis; }
+.top-search__input::placeholder { color: var(--colour-ink-45); text-overflow: ellipsis; }
 .top-search__input::-webkit-search-cancel-button { display: none; }
 .top-search__clear {
   display: inline-flex; align-items: center; justify-content: center; flex: none;

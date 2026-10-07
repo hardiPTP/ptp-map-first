@@ -1,0 +1,1970 @@
+[
+ {
+  "note": "Lead note: smallTargets lists DRAWN boxes. Effective hit areas are larger via CSS ::after extensions: map markers 36x50 drawn -> 52x62 hit; map tags 24 tall drawn -> 44 tall hit; account avatar 40x40 drawn -> 44x44 hit. 'Open this area in Google Maps' is Google's own logo link, not app UI."
+ },
+ {
+  "state": "home-half",
+  "texts": [
+   {
+    "text": "Bandra West",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "All",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Issues",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Events",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Asks",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "5 things within a 10 min walk today",
+    "px": 20,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Showing Bandra West",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "List",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "In your area",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Power cut",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Today, 9:30 PM to Tomorrow, 1:30 AM",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "No water supply",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Tomorrow, 10 AM to 6 PM",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Extended",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Neighbour",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "\u00b7",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Ask",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "\u00b7",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "~2 min walk",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Lost grey cat with a white paw, answers to Moti",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "1 hr ago",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Guru Nanak Park",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "I can help",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "2",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "can help",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Pin",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   }
+  ],
+  "targets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Carrom and chai evening for seniors",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Morning laughter club at the park",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Chess evening, all levels",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sapling planting and park clean-up",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sunday morning run along Carter Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Book swap, bring two and take two",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open badminton trial class for children ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open drain cover near the bus stop",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Cars parked on the footpath every evenin",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Broken tiles on the jogging path near th",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Lost grey cat with a white paw, answers ",
+    "w": 54,
+    "h": 68
+   },
+   {
+    "label": "Can someone teach my mother to use UPI?",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Does anyone have a ladder I can borrow o",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a Marathi tutor for my 10 ye",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Old newspapers and cartons to give away",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "+3",
+    "w": 50,
+    "h": 24
+   },
+   {
+    "label": "Sun",
+    "w": 58,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Bandra West",
+    "w": 166,
+    "h": 44
+   },
+   {
+    "label": "Search places, events, issues",
+    "w": 247,
+    "h": 44
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   },
+   {
+    "label": "All",
+    "w": 54,
+    "h": 44
+   },
+   {
+    "label": "Issues",
+    "w": 84,
+    "h": 44
+   },
+   {
+    "label": "Events",
+    "w": 86,
+    "h": 44
+   },
+   {
+    "label": "Asks",
+    "w": 71,
+    "h": 44
+   },
+   {
+    "label": "Resize sheet, now half. Tap to change.",
+    "w": 390,
+    "h": 44
+   },
+   {
+    "label": "List",
+    "w": 93,
+    "h": 44
+   },
+   {
+    "label": "Power cut\nToday, 9:30 PM to Tomorrow, 1:",
+    "w": 322,
+    "h": 60
+   },
+   {
+    "label": "No water supply\nTomorrow, 10 AM to 6 PME",
+    "w": 322,
+    "h": 60
+   },
+   {
+    "label": "Lost grey cat with a white paw, answers ",
+    "w": 314,
+    "h": 50
+   },
+   {
+    "label": "I can help",
+    "w": 138,
+    "h": 44
+   },
+   {
+    "label": "Share on WhatsApp",
+    "w": 44,
+    "h": 44
+   },
+   {
+    "label": "Show my location",
+    "w": 46,
+    "h": 46
+   },
+   {
+    "label": "Pin",
+    "w": 90,
+    "h": 44
+   }
+  ],
+  "smallText": [],
+  "smallTargets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Carrom and chai evening for seniors",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Morning laughter club at the park",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Chess evening, all levels",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sapling planting and park clean-up",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sunday morning run along Carter Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Book swap, bring two and take two",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open badminton trial class for children ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open drain cover near the bus stop",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Cars parked on the footpath every evenin",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Broken tiles on the jogging path near th",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Can someone teach my mother to use UPI?",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Does anyone have a ladder I can borrow o",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a Marathi tutor for my 10 ye",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Old newspapers and cartons to give away",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "+3",
+    "w": 50,
+    "h": 24
+   },
+   {
+    "label": "Sun",
+    "w": 58,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   }
+  ]
+ },
+ {
+  "state": "detail",
+  "texts": [
+   {
+    "text": "Bandra West",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "All",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Issues",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Events",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Asks",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "3 things within a 10 min walk today",
+    "px": 20,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Showing Bandra West",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "List",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "In your area",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Power cut",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Today, 9:30 PM to Tomorrow, 1:30 AM",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "No water supply",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Tomorrow, 10 AM to 6 PM",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Extended",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Neighbour",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "\u00b7",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Ask",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "\u00b7",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "~1 min walk",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Lost grey cat with a white paw, answers to Moti",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "1 hr ago",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Guru Nanak Park",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "I can help",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "2",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "can help",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Pin",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Last 3 hours",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Guru Nanak Park",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Guru Nanak Park",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Today, 10:01pm",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Neighbour",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Lost grey cat with a white paw, answers to Moti",
+    "px": 27,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Last seen near the park gate yesterday evening. He",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Asked",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "1 hr ago",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "I can help",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "2",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "can help",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   }
+  ],
+  "targets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Carrom and chai evening for seniors",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Morning laughter club at the park",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Chess evening, all levels",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sapling planting and park clean-up",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sunday morning run along Carter Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Book swap, bring two and take two",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open badminton trial class for children ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open drain cover near the bus stop",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Cars parked on the footpath every evenin",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Broken tiles on the jogging path near th",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Lost grey cat with a white paw, answers ",
+    "w": 54,
+    "h": 68
+   },
+   {
+    "label": "Can someone teach my mother to use UPI?",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Does anyone have a ladder I can borrow o",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a Marathi tutor for my 10 ye",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Old newspapers and cartons to give away",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "Sun",
+    "w": 58,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Bandra West",
+    "w": 166,
+    "h": 44
+   },
+   {
+    "label": "Search places, events, issues",
+    "w": 247,
+    "h": 44
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   },
+   {
+    "label": "All",
+    "w": 54,
+    "h": 44
+   },
+   {
+    "label": "Issues",
+    "w": 84,
+    "h": 44
+   },
+   {
+    "label": "Events",
+    "w": 86,
+    "h": 44
+   },
+   {
+    "label": "Asks",
+    "w": 71,
+    "h": 44
+   },
+   {
+    "label": "Resize sheet, now half. Tap to change.",
+    "w": 390,
+    "h": 44
+   },
+   {
+    "label": "List",
+    "w": 93,
+    "h": 44
+   },
+   {
+    "label": "Power cut\nToday, 9:30 PM to Tomorrow, 1:",
+    "w": 322,
+    "h": 60
+   },
+   {
+    "label": "No water supply\nTomorrow, 10 AM to 6 PME",
+    "w": 322,
+    "h": 60
+   },
+   {
+    "label": "Lost grey cat with a white paw, answers ",
+    "w": 314,
+    "h": 50
+   },
+   {
+    "label": "I can help",
+    "w": 138,
+    "h": 44
+   },
+   {
+    "label": "Share on WhatsApp",
+    "w": 44,
+    "h": 44
+   },
+   {
+    "label": "Show my location",
+    "w": 46,
+    "h": 46
+   },
+   {
+    "label": "Pin",
+    "w": 90,
+    "h": 44
+   },
+   {
+    "label": "Close",
+    "w": 46,
+    "h": 46
+   },
+   {
+    "label": "Show on the map: Guru Nanak Park",
+    "w": 350,
+    "h": 324
+   },
+   {
+    "label": "Next",
+    "w": 46,
+    "h": 46
+   },
+   {
+    "label": "I can help",
+    "w": 138,
+    "h": 44
+   },
+   {
+    "label": "Share on WhatsApp",
+    "w": 46,
+    "h": 46
+   }
+  ],
+  "smallText": [],
+  "smallTargets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Carrom and chai evening for seniors",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Morning laughter club at the park",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Chess evening, all levels",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sapling planting and park clean-up",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Sunday morning run along Carter Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Book swap, bring two and take two",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open badminton trial class for children ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Open drain cover near the bus stop",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Cars parked on the footpath every evenin",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Broken tiles on the jogging path near th",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Can someone teach my mother to use UPI?",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Does anyone have a ladder I can borrow o",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a Marathi tutor for my 10 ye",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Old newspapers and cartons to give away",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "Sun",
+    "w": 58,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   }
+  ]
+ },
+ {
+  "state": "create-placing",
+  "texts": [
+   {
+    "text": "Bandra West",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "All",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Issues",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Events",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Asks",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "1 thing within a 10 min walk",
+    "px": 20,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Showing Bandra West, since last night",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "List",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Chic Bandra West Hideaway: Cozy 1-Bedroom Retreat ",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Move the map to the spot",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Back",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Use this spot",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   }
+  ],
+  "targets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Bandra West",
+    "w": 166,
+    "h": 44
+   },
+   {
+    "label": "Search places, events, issues",
+    "w": 247,
+    "h": 44
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   },
+   {
+    "label": "All",
+    "w": 54,
+    "h": 44
+   },
+   {
+    "label": "Issues",
+    "w": 84,
+    "h": 44
+   },
+   {
+    "label": "Events",
+    "w": 86,
+    "h": 44
+   },
+   {
+    "label": "Asks",
+    "w": 71,
+    "h": 44
+   },
+   {
+    "label": "Resize sheet, now peek. Tap to change.",
+    "w": 390,
+    "h": 44
+   },
+   {
+    "label": "List",
+    "w": 93,
+    "h": 44
+   },
+   {
+    "label": "Back",
+    "w": 76,
+    "h": 52
+   },
+   {
+    "label": "Use this spot",
+    "w": 264,
+    "h": 52
+   }
+  ],
+  "smallText": [],
+  "smallTargets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   }
+  ]
+ },
+ {
+  "state": "create-event-details",
+  "texts": [
+   {
+    "text": "Bandra West",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "All",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Issues",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Events",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Asks",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "1 thing within a 10 min walk",
+    "px": 20,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Showing Bandra West, since last night",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "List",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Chic Bandra West Hideaway: Cozy 1-Bedroom Retreat ",
+    "px": 16,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "What is it?",
+    "px": 19,
+    "family": "\"Stack Sans Headline\"",
+    "weight": "400"
+   },
+   {
+    "text": "Issue",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Event",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Ask",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Title",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "When",
+    "px": 14,
+    "family": "\"Stack Sans Text\"",
+    "weight": "400"
+   },
+   {
+    "text": "Today",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Tomorrow",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Pick a date",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   },
+   {
+    "text": "Add a title, 3 letters or more",
+    "px": 15,
+    "family": "\"Stack Sans Text\"",
+    "weight": "500"
+   }
+  ],
+  "targets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Bandra West",
+    "w": 166,
+    "h": 44
+   },
+   {
+    "label": "Search places, events, issues",
+    "w": 247,
+    "h": 44
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   },
+   {
+    "label": "All",
+    "w": 54,
+    "h": 44
+   },
+   {
+    "label": "Issues",
+    "w": 84,
+    "h": 44
+   },
+   {
+    "label": "Events",
+    "w": 86,
+    "h": 44
+   },
+   {
+    "label": "Asks",
+    "w": 71,
+    "h": 44
+   },
+   {
+    "label": "Resize sheet, now peek. Tap to change.",
+    "w": 390,
+    "h": 44
+   },
+   {
+    "label": "List",
+    "w": 93,
+    "h": 44
+   },
+   {
+    "label": "Back",
+    "w": 58,
+    "h": 44
+   },
+   {
+    "label": "Issue",
+    "w": 110,
+    "h": 92
+   },
+   {
+    "label": "Event",
+    "w": 110,
+    "h": 92
+   },
+   {
+    "label": "Ask",
+    "w": 110,
+    "h": 92
+   },
+   {
+    "label": "Watercolour class for beginners, Sat 5pm",
+    "w": 350,
+    "h": 56
+   },
+   {
+    "label": "Today",
+    "w": 81,
+    "h": 44
+   },
+   {
+    "label": "Tomorrow",
+    "w": 111,
+    "h": 44
+   },
+   {
+    "label": "Pick a date",
+    "w": 117,
+    "h": 44
+   },
+   {
+    "label": "Time",
+    "w": 350,
+    "h": 58
+   },
+   {
+    "label": "Add a title, 3 letters or more",
+    "w": 350,
+    "h": 52
+   }
+  ],
+  "smallText": [],
+  "smallTargets": [
+   {
+    "label": "Beginners yoga, bring your own mat",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Story hour for children, ages 5 to 8",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Evening walk to Bandstand and back",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Residents meet on water tanker timings",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Watercolour class for beginners",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlight not working on Hill Road",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Hawkers back on the footpath outside no.",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Garbage not cleared for two days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Big pothole in the left lane of S.V. Roa",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Tree branch hanging over the footpath",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Water logging in the lane after evening ",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Streetlights off on the stretch before t",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need someone to water plants for 3 days",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Looking for a good electrician for a fan",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "Need a cab share to the airport on Satur",
+    "w": 36,
+    "h": 50
+   },
+   {
+    "label": "2",
+    "w": 41,
+    "h": 24
+   },
+   {
+    "label": "Open this area in Google Maps (opens a n",
+    "w": 66,
+    "h": 26
+   },
+   {
+    "label": "Your account",
+    "w": 40,
+    "h": 40
+   }
+  ]
+ }
+]
