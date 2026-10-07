@@ -39,6 +39,16 @@ Lead fixes at Gate 1: tidy seed times, type-chip rule, visible-band map centring
 
 Gate 1: typecheck pass, lint pass, unit 77/77, rules 14/14 (emulator), build pass. Full-app screenshots docs/screens/g1c-{half,full,peek}-390.png looked at, compared against Figma card-update/card-event/chip-filter/sheet: same shell, depth, type families.
 
+## Phase 2: DONE (Gate 2 passed 2026-10-07)
+
+Agents E (create), F (map tags), G (detail) ran in parallel (sonnet); each passed its gate.
+- E: "+ Pin", placing mode (fixed centre pin, nearest place on idle), type tiles, title, event day chips + time, Post as neighbour only, back at every step, long-press entry. Screens docs/screens/create-1..6 looked at.
+- F: selectTags (score, zoom caps, overlap + marker-body rejection, 30% stickiness, selected always, freshness), tag content per PRD table, own overlay; recompute on idle/selection only; 20 px pan leaves the tag set identical. 23 unit tests.
+- G: story-style detail (header, segments over the feed list, map window, glass sheet, poster label, action + WhatsApp + Directions), no timers, back button closes. Side-by-side with Figma docs/screens/detail-vs-figma.png looked at.
+Lead at Gate 2: "just posted by this device" first in the feed (+ test); detail map window fills the media slot (docs/screens/g2-detail-390.png looked at); full-flow e2e on emulators.
+
+Gate 2: typecheck pass, lint pass, unit 127/127 + 1 lead test, rules 14/14, build pass, e2e 9/9 on emulators (`npm run e2e:emulator`: create one of each type with postedAs neighbour verified in Firestore; support toggle persisted as pinId_uid and removed on second tap; detail open/next/close; chips; area strip share; name privacy).
+
 ## Unverified
 
 - Real touch drag of the sheet and real touch long-press (tested with mouse pointer events).
@@ -46,4 +56,7 @@ Gate 1: typecheck pass, lint pass, unit 77/77, rules 14/14 (emulator), build pas
 - Selecting a live Google place suggestion end to end (unit tested with mocks only, to save the Demo Key cap).
 - firestoreRepo in the running app (VITE_DATA_SOURCE=emulator); exercised through emulator rules tests only.
 - No Google place photos were returned for seeded venues; place avatars show a neutral circle.
+- Cluster markers and "N events" cluster tags on screen (zoom <= 13): unit tested only, not screenshotted yet.
+- Six-tag case at zoom 17+ (unit tested only).
+- Real Android back button for create/detail (synthetic popstate tested).
 - Whether JSON `styles` are ignored when a mapId is set: no Google doc page found that says so; design avoids depending on it.

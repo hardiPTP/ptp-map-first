@@ -1,0 +1,100 @@
+/* Detail view. Tokens only. Figma 3552:3120 (story), 3675:13987 (card/map), 3547:3210 (story/header). */
+.detail {
+  position: fixed; inset: 0; z-index: 40;
+  display: flex; flex-direction: column;
+  background: var(--surface-canvas); color: var(--colour-ink-100);
+  outline: none;
+}
+
+/* header on canvas */
+.detail-head { flex: none; padding-top: max(env(safe-area-inset-top), 20px); }
+.detail-head__bar { position: relative; height: 54px; padding: 4px var(--space-margin) 0; }
+.detail-head__title {
+  position: absolute; left: 0; right: 0; top: 0; height: 54px; margin: 0;
+  display: flex; align-items: center; justify-content: center; pointer-events: none;
+  font: 400 16px/20px var(--font-text);
+}
+.detail-head__prog { display: flex; gap: 12px; padding: 20px var(--space-margin) 16px; }
+.detail-seg {
+  position: relative; flex: 1 1 0; min-width: 0; height: 8px; overflow: hidden;
+  border-radius: 4px; background: var(--surface-canvas); box-shadow: var(--elev-press-s);
+}
+.detail-seg__b { display: none; height: 8px; border-radius: 4px; background: var(--colour-accent-orange); }
+.detail-seg.is-done .detail-seg__b { display: block; width: 100%; }
+
+/* media area: tap zones live on the canvas around the window */
+.detail-media {
+  position: relative; flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px var(--space-margin) 48px; cursor: pointer;
+}
+.detail-arrow {
+  position: absolute; top: 50%; margin-top: -23px; width: 46px; height: 46px; padding: 0; border: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-pill); background: var(--surface-canvas); color: var(--colour-ink-100);
+  box-shadow: var(--elev-marker);
+}
+.detail-arrow--r { right: 16px; }
+.detail-arrow--l { left: 16px; }
+.detail-arrow:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* card/map */
+.detail-map {
+  position: relative; display: block; width: 100%; max-width: 350px; height: 100%; min-height: 180px; max-height: 377px; padding: 0; border: 0;
+  overflow: hidden; border-radius: var(--radius-media-outer);
+  background: var(--surface-line); box-shadow: var(--elev-press); cursor: pointer;
+}
+.detail-map:focus-visible { outline: none; box-shadow: var(--elev-press), var(--focus-ring); }
+.detail-map__road { position: absolute; background: var(--surface-canvas); opacity: 0.75; pointer-events: none; }
+.detail-map__road--h1 { left: -20px; top: 30%; width: 390px; height: 26px; }
+.detail-map__road--h2 { left: -20px; top: 69%; width: 390px; height: 20px; }
+.detail-map__road--v1 { left: 74px; top: 0; width: 24px; height: 100%; }
+.detail-map__road--v2 { left: 236px; top: 0; width: 18px; height: 100%; }
+.detail-map__landmark {
+  position: absolute; left: 12px; bottom: 12px; padding: 8px 14px 8px 12px; max-width: calc(100% - 24px);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left;
+  border-radius: var(--radius-pill); background: var(--surface-paper);
+  -webkit-backdrop-filter: var(--elev-raise-s-blur); backdrop-filter: var(--elev-raise-s-blur);
+  box-shadow: var(--elev-raise-s); color: var(--colour-ink-80); font: var(--text-meta-lg);
+}
+
+/* selected marker (same anatomy as map.css .is-selected, 54x68 at left 148 top 56 in Figma) */
+.detail-mk { --mk: var(--colour-accent-orange); position: absolute; left: calc(50% - 27px); top: calc(30% + 13px - 27px); width: 54px; height: 68px; color: var(--surface-paper); pointer-events: none; }
+.detail-mk--event { --mk: var(--colour-state-green); }
+.detail-mk--ask { --mk: var(--colour-ink-100); color: var(--colour-ink-100); }
+.detail-mk__halo { position: absolute; left: 0; top: 0; width: 54px; height: 54px; border-radius: 50%; background: var(--mk); opacity: 0.18; }
+.detail-mk__disc {
+  position: absolute; left: 11px; top: 11px; width: 32px; height: 32px; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-pill); background: var(--mk); border: 2px solid var(--surface-paper); box-shadow: var(--elev-marker);
+}
+.detail-mk--civic .detail-mk__disc { border-radius: calc(var(--radius-media-inner) / 2); }
+.detail-mk--ask .detail-mk__disc { background: var(--surface-paper); border-color: var(--colour-ink-100); }
+.detail-mk.is-place .detail-mk__disc { box-shadow: 0 0 0 2px var(--colour-accent-orange), var(--elev-marker); }
+.detail-mk__stalk { position: absolute; left: 26px; top: 53px; width: 2px; height: 10px; background: var(--mk); }
+.detail-mk__tip { position: absolute; left: 24.5px; top: 63px; width: 5px; height: 5px; border-radius: 50%; background: var(--mk); }
+
+/* glass sheet */
+.detail-sheet {
+  flex: none; display: flex; flex-direction: column; gap: 14px;
+  padding: 24px var(--space-margin) calc(28px + env(safe-area-inset-bottom));
+  border-radius: var(--radius-sheet-figma) var(--radius-sheet-figma) 0 0;
+  background: var(--surface-paper-glass);
+  -webkit-backdrop-filter: var(--elev-sheet-blur); backdrop-filter: var(--elev-sheet-blur);
+  box-shadow: var(--elev-sheet);
+}
+.detail-sheet__meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.detail-sheet__when { display: flex; flex-wrap: wrap; gap: 2px 10px; min-width: 0; font: var(--text-meta-lg); color: var(--colour-ink-60); }
+.detail-sheet__poster { flex: 0 1 auto; min-width: 0; max-width: 60%; display: flex; justify-content: flex-end; }
+.detail-sheet__when { flex: 1 1 auto; }
+.detail-sheet__title { margin: 0; font: var(--text-h1); letter-spacing: var(--text-h1-track); }
+.detail-sheet__body { margin: 0; font: var(--text-body-lg); color: var(--colour-ink-80); }
+.detail-sheet__facts { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 14px; font: var(--text-meta-lg); color: var(--colour-ink-80); }
+.detail-sheet__facts:empty { display: none; }
+.detail-sheet__fact-main { display: inline-flex; align-items: center; gap: 9px; font: 400 16px/20px var(--font-text); color: var(--colour-ink-100); }
+.detail-sheet__link {
+  display: inline-flex; align-items: center; gap: 6px; min-height: var(--space-touch-min);
+  color: var(--colour-accent-orange-deep); text-decoration: none; font: var(--text-label-lg);
+}
+.detail-sheet__actions { display: flex; align-items: center; gap: 14px; }
+.detail-sheet__count { flex: 1; font: var(--text-meta-lg); color: var(--colour-ink-60); }

@@ -1,0 +1,17 @@
+/* Map tags. Tokens only. The Tag primitive supplies the pill; this positions it beside the marker. */
+.map-tag-anchor { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+.map-tag {
+  position: absolute; left: 22px; top: -43.5px; padding: 0; border: 0; background: none; cursor: pointer;
+}
+.map-tag.is-selected { top: -50.5px; }
+.map-tag.is-cluster { left: 28px; top: -12px; }
+.map-tag::after { content: ''; position: absolute; inset: -10px -4px; } /* 44px touch target */
+
+.map-tag__ring { display: block; }
+.map-tag__ring-track { fill: none; stroke: var(--colour-ink-25); stroke-width: 2; }
+.map-tag__ring-fill { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: butt; }
+/* No red token exists in the design system: "past" uses orange-deep (reported as a design decision). */
+.map-tag__ring.is-past .map-tag__ring-track,
+.map-tag__ring.is-past .map-tag__ring-fill { stroke: var(--colour-accent-orange-deep); }
+.map-tag__avatar { display: block; width: 14px; height: 14px; border-radius: var(--radius-pill); background: var(--surface-well); box-shadow: inset 0 0 0 var(--stroke) var(--surface-line); }
+.map-tag__arrow { display: inline-flex; }

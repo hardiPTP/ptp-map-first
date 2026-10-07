@@ -14,7 +14,8 @@
     "emulators": "JAVA_HOME=$(ls -d $PWD/.tools/jdk-*/Contents/Home) PATH=$(ls -d $PWD/.tools/jdk-*/Contents/Home)/bin:$PATH firebase emulators:start --project demo-ptp --only firestore,auth",
     "test:rules": "JAVA_HOME=$(ls -d $PWD/.tools/jdk-*/Contents/Home) PATH=$(ls -d $PWD/.tools/jdk-*/Contents/Home)/bin:$PATH firebase emulators:exec --project demo-ptp --only firestore 'vitest run --config vitest.rules.config.ts'",
     "seed": "tsx scripts/seed.ts",
-    "deploy": "npm run build && firebase deploy --only hosting,firestore:rules"
+    "deploy": "npm run build && firebase deploy --only hosting,firestore:rules",
+    "e2e:emulator": "JAVA_HOME=$(ls -d $PWD/.tools/jdk-*/Contents/Home) PATH=$(ls -d $PWD/.tools/jdk-*/Contents/Home)/bin:$PATH firebase emulators:exec --project demo-ptp --only firestore,auth 'sh scripts/e2e-emulator.sh'"
   },
   "dependencies": {
     "@vis.gl/react-google-maps": "^1.10.1",
