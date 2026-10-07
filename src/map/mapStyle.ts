@@ -11,6 +11,8 @@ export const WARM_MUTED_STYLE: google.maps.MapTypeStyle[] = [
   { featureType: 'poi.park', elementType: 'geometry', stylers: [{ visibility: 'on' }, { color: '#f1ece4' }] },
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
   { featureType: 'administrative', elementType: 'geometry', stylers: [{ visibility: 'off' }] },
+  // Quieter neighbourhood names (Gate 1): same ink, lighter, so pins and road names lead.
+  { featureType: 'administrative.neighborhood', elementType: 'labels.text.fill', stylers: [{ color: '#17140f' }, { lightness: 62 }] },
   { featureType: 'road', elementType: 'geometry.fill', stylers: [{ color: '#ffffff' }] },
   { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#e7e3dc' }] },
   { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#ffffff' }] },

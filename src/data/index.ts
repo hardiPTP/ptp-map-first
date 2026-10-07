@@ -1,19 +1,9 @@
-// OWNED BY AGENT C. Phase 0 placeholder so the app compiles; replaced in Phase 1.
-// Contract: export `repo: Repo` chosen by VITE_DATA_SOURCE ("mock" | "emulator" | "firebase").
+// Data layer entry. `repo` is chosen by VITE_DATA_SOURCE: "mock" (default) | "emulator" | "firebase".
 import type { Repo } from '../types'
+import { createFirestoreRepo } from './firestoreRepo'
+import { createMockRepo } from './mockRepo'
 
-export const repo: Repo = {
-  init: async () => ({ deviceId: 'placeholder' }),
-  subscribePins: (_b, cb) => {
-    cb([])
-    return () => {}
-  },
-  subscribeSupports: (cb) => {
-    cb([])
-    return () => {}
-  },
-  createPin: async () => {
-    throw new Error('not implemented')
-  },
-  toggleSupport: async () => ({ supported: false }),
-}
+const source = import.meta.env.VITE_DATA_SOURCE
+
+export const repo: Repo =
+  source === 'emulator' || source === 'firebase' ? createFirestoreRepo(source) : createMockRepo()

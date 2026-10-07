@@ -1,6 +1,24 @@
-// OWNED BY AGENT B. Phase 0 stub. Contract: export SheetLayer (BottomSheet with header, AreaStrip, Feed).
-// BottomSheet must publish its visible height in px as the CSS variable --sheet-offset on
-// document.documentElement, so app/ can float the locate and "+ Pin" buttons on the sheet edge.
+// OWNED BY AGENT B. SheetLayer = BottomSheet + SheetHeader + AreaStrip + Feed.
+import { useRef } from 'react'
+import { useStore } from '../store'
+import { AreaStrip } from './AreaStrip'
+import { BottomSheet } from './BottomSheet'
+import { Feed } from './Feed'
+import { SheetHeader } from './SheetHeader'
+import { useFeed } from './useFeed'
+import './sheet.css'
+
 export function SheetLayer() {
-  return null
+  const feed = useFeed()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const searching = useStore((s) => s.searchPlace != null)
+  return (
+    <BottomSheet
+      scrollRef={scrollRef}
+      header={(height, pill) => <SheetHeader feed={feed} height={height} onPill={pill} />}
+    >
+      {!searching && <AreaStrip origin={feed.origin} now={feed.now} />}
+      <Feed feed={feed} scrollRoot={scrollRef} />
+    </BottomSheet>
+  )
 }

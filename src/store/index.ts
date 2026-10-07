@@ -15,6 +15,7 @@ export type AreaMode = 'area' | 'nearMe'
 export interface Viewport {
   bounds: Bounds | null
   zoom: number
+  /** Centre of the VISIBLE map band (between top bar and sheet), not the map's geometric centre. */
   center: LatLng
 }
 

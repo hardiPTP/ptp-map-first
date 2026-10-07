@@ -1,0 +1,51 @@
+/* Map markers. Figma pin/map (docs/figma/SPEC.md). Tokens only. */
+.map-overlay { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+.map-anchor { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+
+.map-mk {
+  --mk: var(--colour-accent-orange);
+  position: absolute; left: -18px; top: -47.5px; width: 36px; height: 50px;
+  padding: 0; border: 0; background: none; cursor: pointer; color: var(--surface-paper);
+}
+.map-mk::after { content: ''; position: absolute; inset: -6px -8px; } /* 44px touch target */
+.map-mk--event { --mk: var(--colour-state-green); }
+.map-mk--ask { --mk: var(--colour-ink-100); color: var(--colour-ink-100); }
+
+.map-mk__disc {
+  position: absolute; left: 2px; top: 0; width: 32px; height: 32px; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-pill); background: var(--mk); border: 2px solid var(--surface-paper);
+  box-shadow: var(--elev-marker);
+}
+.map-mk--civic .map-mk__disc { border-radius: calc(var(--radius-media-inner) / 2); }
+.map-mk--ask .map-mk__disc { background: var(--surface-paper); border-color: var(--colour-ink-100); }
+.map-mk.is-place .map-mk__disc { box-shadow: 0 0 0 2px var(--colour-accent-orange), var(--elev-marker); }
+.map-mk__stalk { position: absolute; left: 17px; top: 35px; width: 2px; height: 10px; background: var(--mk); }
+.map-mk__tip { position: absolute; left: 15.5px; top: 45px; width: 5px; height: 5px; border-radius: 50%; background: var(--mk); }
+
+/* selected: 54x68, tip centre at (27, 65.5) */
+.map-mk.is-selected { left: -27px; top: -65.5px; width: 54px; height: 68px; }
+.map-mk.is-selected .map-mk__disc { left: 11px; top: 11px; }
+.map-mk.is-selected .map-mk__stalk { left: 26px; top: 53px; }
+.map-mk.is-selected .map-mk__tip { left: 24.5px; top: 63px; }
+.map-mk__halo { position: absolute; left: 0; top: 0; width: 54px; height: 54px; border-radius: 50%; background: var(--mk); opacity: 0.18; }
+
+/* pulse ring: expanding, pin colour, low opacity. CSS only. */
+.map-mk__pulse {
+  position: absolute; left: 2px; top: 0; width: 32px; height: 32px; box-sizing: border-box;
+  border: 2px solid var(--mk); border-radius: var(--radius-pill); opacity: 0; pointer-events: none;
+  animation: map-pulse 2.2s ease-out infinite;
+}
+.map-mk--civic .map-mk__pulse { border-radius: calc(var(--radius-media-inner) / 2); }
+.map-mk.is-selected .map-mk__pulse { left: 11px; top: 11px; }
+@keyframes map-pulse { 0% { transform: scale(1); opacity: 0.35; } 100% { transform: scale(2.1); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .map-mk__pulse { animation: none; } }
+
+.map-cluster {
+  position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; box-sizing: border-box; padding: 0;
+  border-radius: var(--radius-pill); background: var(--surface-paper); border: var(--stroke) solid var(--surface-line);
+  box-shadow: var(--elev-marker); color: var(--colour-ink-100);
+  font: 400 15px/1 var(--font-text); cursor: pointer;
+}
+.map-you { position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; pointer-events: none; }
+.map-you img { display: block; }
