@@ -6,6 +6,7 @@ import { BANDRA_WEST, DEFAULT_ZOOM, useStore } from '../store'
 import { Circles } from './Circles'
 import { WARM_MUTED_STYLE } from './mapStyle'
 import { Markers } from './Markers'
+import { MapTags } from './tags'
 import { clickSuppressed } from './useLongPress'
 import { MAP_ID, MAP_MODE } from './mapMode'
 
@@ -111,6 +112,7 @@ export function MapView({ children }: { children?: React.ReactNode }) {
       <FlyToController />
       <Circles />
       <Markers />
+      <MapTags />
       {children}
     </Map>
   )
