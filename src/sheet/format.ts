@@ -58,6 +58,13 @@ export function clockCaps(ts: number): string {
   return clock(ts).replace(/(am|pm)$/, (s) => ' ' + s.toUpperCase())
 }
 
+/** Offers: "Offer · until Sat", "Offer · ends today". */
+export function offerWhen(endsAt: number | null | undefined, now: number): string {
+  if (endsAt == null) return 'Offer'
+  const day = dayLabel(endsAt, now)
+  return day === 'Today' ? 'Offer · ends today' : `Offer · until ${day}`
+}
+
 /** "Today, 5pm" */
 export function eventWhen(startsAt: number, now: number): string {
   return `${dayLabel(startsAt, now)}, ${clock(startsAt)}`

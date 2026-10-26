@@ -25,7 +25,7 @@ Read this first, every session. Then docs/PRD.md and docs/IMPLEMENTATION.md, in 
 ## Privacy and product rules that are easy to break
 
 - Never show any user's name in the feed, on cards or on the map. Only inside that user's own account sheet.
-- Users can only post as "Neighbour". "Place" and "Push The Pin" posts are seeded or team-entered; the creation UI never offers them.
+- Users post as "Neighbour". "Push The Pin" posts are seeded or team-entered; the creation UI never offers them. "Place" is offered only to a device holding an ACTIVE claim on that place (PRD Addendum 2026-10-22, round 2).
 - Map tags change on map idle only. No timers, no auto-rotation.
 
 ## Secrets and cost

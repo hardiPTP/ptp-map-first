@@ -1,7 +1,7 @@
 // Frozen store API (Phase 0). Agents read/write through these actions only.
 // Change requests go to the lead.
 import { create } from 'zustand'
-import type { Bounds, Filter, LatLng, NearbyPlace, Pin, SheetHeight, Support } from '../types'
+import type { Bounds, Claim, Comment, Filter, LatLng, NearbyPlace, Pin, SheetHeight, Support } from '../types'
 
 /** Bandra West (Ward H-West). Centre given in docs/IMPLEMENTATION.md Gate 0. */
 export const BANDRA_WEST: LatLng = { lat: 19.0596, lng: 72.8295 }
@@ -25,6 +25,8 @@ export interface FlyTo extends LatLng {
   nonce: number
 }
 
+export type DetailSection = 'top' | 'comments'
+
 export type CreateStep = 'idle' | 'placing' | 'details'
 export interface CreateState {
   step: CreateStep
@@ -32,6 +34,8 @@ export interface CreateState {
   at: LatLng | null
   placeId: string | null
   placeName: string | null
+  /** Post as the place (only offered when this device holds an active claim on placeId). */
+  asPlace: boolean
 }
 
 /** A Google place picked in search: the sheet lists pins at this placeId. */
@@ -44,6 +48,10 @@ export interface AppState {
   // data (filled by the repo subscription in app/)
   pins: Pin[]
   supports: Support[]
+  /** Live comments only (the repo never passes under_review ones). */
+  comments: Comment[]
+  /** Place claims, pending and active (DECISIONS.md 2026-10-22). */
+  claims: Claim[]
   deviceId: string | null
   /** Real places from Google within the walk radius (context layer, not content). */
   places: NearbyPlace[]
@@ -56,6 +64,8 @@ export interface AppState {
   selectedAreaId: string | null
   searchPlace: SearchPlace | null
   detailPinId: string | null
+  /** Where the detail view opens: the top, or scrolled to its comments (bubble tap). */
+  detailSection: DetailSection
 
   // layout
   sheetHeight: SheetHeight
@@ -73,6 +83,8 @@ export interface AppState {
   // actions
   setPins(pins: Pin[]): void
   setSupports(supports: Support[]): void
+  setComments(comments: Comment[]): void
+  setClaims(claims: Claim[]): void
   setPlaces(places: NearbyPlace[]): void
   setDeviceId(id: string): void
   setFilter(f: Filter): void
@@ -81,7 +93,7 @@ export interface AppState {
   highlightPin(id: string | null): void
   selectArea(id: string | null): void
   setSearchPlace(p: SearchPlace | null): void
-  openDetail(id: string | null): void
+  openDetail(id: string | null, opts?: { section?: DetailSection }): void
   setSheetHeight(h: SheetHeight): void
   /** Called by the map on idle only. */
   setViewport(v: Viewport): void
@@ -92,17 +104,19 @@ export interface AppState {
   /** "+ Pin": enter placing mode. Long-press: pass `at` and skipToDetails=true. */
   startCreate(opts?: { at?: LatLng; skipToDetails?: boolean }): void
   /** "Use this spot" */
-  confirmSpot(at: LatLng, place: { placeId: string | null; placeName: string | null }): void
+  confirmSpot(at: LatLng, place: { placeId: string | null; placeName: string | null }, opts?: { asPlace?: boolean }): void
   cancelCreate(): void
 }
 
 
 let nonce = 0
-const idleCreate: CreateState = { step: 'idle', at: null, placeId: null, placeName: null }
+const idleCreate: CreateState = { step: 'idle', at: null, placeId: null, placeName: null, asPlace: false }
 
 export const useStore = create<AppState>()((set, get) => ({
   pins: [],
   supports: [],
+  comments: [],
+  claims: [],
   deviceId: null,
   places: [],
 
@@ -112,6 +126,7 @@ export const useStore = create<AppState>()((set, get) => ({
   selectedAreaId: null,
   searchPlace: null,
   detailPinId: null,
+  detailSection: 'top',
 
   sheetHeight: 'half',
   viewport: { bounds: null, zoom: DEFAULT_ZOOM, center: BANDRA_WEST },
@@ -125,6 +140,8 @@ export const useStore = create<AppState>()((set, get) => ({
 
   setPins: (pins) => set({ pins }),
   setSupports: (supports) => set({ supports }),
+  setComments: (comments) => set({ comments }),
+  setClaims: (claims) => set({ claims }),
   setPlaces: (places) => set({ places }),
   setDeviceId: (deviceId) => set({ deviceId }),
   /** Tapping the selected chip again clears it (no chip = everything). */
@@ -139,7 +156,7 @@ export const useStore = create<AppState>()((set, get) => ({
   highlightPin: (highlightedPinId) => set({ highlightedPinId }),
   selectArea: (selectedAreaId) => set({ selectedAreaId }),
   setSearchPlace: (searchPlace) => set({ searchPlace }),
-  openDetail: (detailPinId) => set({ detailPinId }),
+  openDetail: (detailPinId, opts) => set({ detailPinId, detailSection: opts?.section ?? 'top' }),
   setSheetHeight: (sheetHeight) => set({ sheetHeight }),
   setViewport: (viewport) => set({ viewport }),
   requestFlyTo: (target) => set({ flyTo: { ...target, nonce: ++nonce } }),
@@ -153,8 +170,9 @@ export const useStore = create<AppState>()((set, get) => ({
         at: opts?.at ?? null,
         placeId: null,
         placeName: null,
+        asPlace: false,
       },
     }),
-  confirmSpot: (at, place) => set({ create: { step: 'details', at, ...place } }),
+  confirmSpot: (at, place, opts) => set({ create: { step: 'details', at, ...place, asPlace: !!opts?.asPlace } }),
   cancelCreate: () => set({ create: idleCreate }),
 }))

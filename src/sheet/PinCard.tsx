@@ -7,15 +7,17 @@ import { formatDistance } from '../lib/geo'
 import { repo } from '../data'
 import { useStore } from '../store'
 import type { LatLng, Pin } from '../types'
-import { clock, dayLabel, eventWhen, openWhatsapp } from './format'
+import { clock, dayLabel, eventWhen, offerWhen, openWhatsapp } from './format'
+import { openPlace } from './openPlace'
 
-const ACTION_LABEL = { civic: 'I see it too', event: "I'm going", ask: 'I can help', area: '' } as const
-const ACTION_ICON = { civic: 'ic-checkcircle', event: 'calendar-check-off', ask: 'ic-bubble', area: 'ic-check' } as const
+const ACTION_LABEL = { civic: 'I see it too', event: "I'm going", ask: 'I can help', offer: "I'm interested", area: '' } as const
+const ACTION_ICON = { civic: 'ic-checkcircle', event: 'calendar-check-off', ask: 'ic-bubble', offer: 'ic-heart', area: 'ic-check' } as const
 
 export function countText(pin: Pin, n: number): string | null {
   if (pin.type === 'ask') return n === 0 ? 'No replies yet' : n === 1 ? '1 can help' : `${n} can help`
   if (n === 0) return null
   if (pin.type === 'event') return `${n} going`
+  if (pin.type === 'offer') return `${n} interested`
   return n === 1 ? '1 neighbour sees it' : `${n} neighbours see it`
 }
 
@@ -95,8 +97,24 @@ export const PinCard = memo(function PinCard({ pin, origin, now, count, supporte
     >
       <div className="sheet-card__meta">
         <span className="sheet-card__where">
-          <span className="sheet-card__where-name">{where}</span>
-          {pin.postedAs === 'place' && <Icon name="verified" size={15} tint={false} />}
+          {pin.placeId && pin.placeName ? (
+            <button
+              type="button"
+              className="sheet-card__where-name sheet-card__at"
+              aria-label={`Everything at ${pin.placeName}`}
+              onClick={() => openPlace({ placeId: pin.placeId!, placeName: pin.placeName!, lat: pin.lat, lng: pin.lng })}
+            >
+              @ {where}
+            </button>
+          ) : (
+            <span className="sheet-card__where-name">{where}</span>
+          )}
+          {pin.postedAs === 'place' && (
+            <>
+              <Icon name="verified" size={15} tint={false} />
+              <span className="sr-only">verified place</span>
+            </>
+          )}
         </span>
         <span className="sheet-card__right">{right}</span>
       </div>
@@ -109,6 +127,12 @@ export const PinCard = memo(function PinCard({ pin, origin, now, count, supporte
         <div className="sheet-card__when">
           <Icon name="calendar-when" size={18} tint={false} />
           {whenText(pin, now)}
+        </div>
+      )}
+      {pin.type === 'offer' && (
+        <div className="sheet-card__when">
+          <Icon name="ic-heart" size={18} />
+          {offerWhen(pin.endsAt, now)}
         </div>
       )}
       {pin.type === 'civic' && pin.body && <p className="sheet-card__body">{pin.body}</p>}

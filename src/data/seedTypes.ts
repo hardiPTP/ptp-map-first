@@ -24,9 +24,19 @@ export interface SeedSupport {
   createdAtMin: number
 }
 
+/** A neighbour comment, status "live" (seeded comments are already reviewed). */
+export interface SeedComment {
+  id: string
+  pinId: string
+  text: string
+  deviceId: string
+  createdAtMin: number
+}
+
 export interface SeedFile {
   /** Venues/streets the seed was built from (names exactly as Places returned them). */
   source: string
   pins: SeedPin[]
   supports: SeedSupport[]
+  comments?: SeedComment[]
 }

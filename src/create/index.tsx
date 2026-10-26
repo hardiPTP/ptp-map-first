@@ -10,7 +10,12 @@ import './create.css'
 
 export function PinButton() {
   return (
-    <Button variant="primary" icon="ic-plus" data-testid="pin-button" onClick={() => useStore.getState().startCreate()}>
+    <Button
+      variant="primary"
+      icon="ic-plus"
+      data-testid="pin-button"
+      onClick={() => useStore.getState().startCreate()}
+    >
       Pin
     </Button>
   )
@@ -76,11 +81,10 @@ export function CreateLayer() {
     <div className="create-layer">
       {step === 'placing' && <Placing onBack={back} />}
       {step === 'details' && <Details onBack={back} fromPlacing={cameFromPlacing} onPosted={() => setSnack(true)} />}
-      {snack && (
-        <div className="create-snack">
-          <Snack>Pinned. It is at the top of Pulse.</Snack>
-        </div>
-      )}
+      {/* Always rendered, so screen readers announce the snack when it appears (WCAG 4.1.3). */}
+      <div className="create-snack" role="status">
+        {snack && <Snack>Pinned. It is at the top of Pulse.</Snack>}
+      </div>
     </div>
   )
 }

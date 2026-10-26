@@ -100,6 +100,6 @@ export function isLive(pin: Pin, supports: Support[], now: number): boolean {
     const end = eventEnd(pin)
     return end == null || now <= end + EVENT_SOON_MS
   }
-  if (pin.type === 'area') return pin.endsAt == null || now <= pin.endsAt
+  if (pin.type === 'area' || pin.type === 'offer') return pin.endsAt == null || now <= pin.endsAt
   return true
 }

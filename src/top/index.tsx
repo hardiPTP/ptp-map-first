@@ -1,6 +1,6 @@
 // Top bar: masthead line, search with account avatar, filter chips. Floats over the map (z 10).
 import { useMapsLibrary } from '@vis.gl/react-google-maps'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Chip, Icon } from '../design/primitives'
 import { useStore } from '../store'
@@ -31,7 +31,8 @@ function useChipCounts(): Record<Exclude<Filter, 'all'>, number> {
     const inView = (p: { lat: number; lng: number }) =>
       !b || (p.lat <= b.north && p.lat >= b.south && p.lng >= b.west && p.lng <= b.east)
     const c = { civic: 0, event: 0, ask: 0, places: 0 }
-    for (const p of pins) if (p.type !== 'area' && inView(p) && isLive(p, supports, now)) c[p.type]++
+    for (const p of pins)
+      if (p.type !== 'area' && p.type !== 'offer' && inView(p) && isLive(p, supports, now)) c[p.type]++
     c.places = places.filter(inView).length
     return c
   }, [pins, supports, places, b])
@@ -105,6 +106,27 @@ function SearchBar({ onAccount }: { onAccount: () => void }) {
   const showPanel = open && !short && (ours.length > 0 || theirs.length > 0)
   const showEmpty = open && !short && !showPanel
 
+  // Combobox (WAI-ARIA APG, list autocomplete): focus stays in the field, Arrow Up / Down move through the results,
+  // Enter picks, Escape closes. The results are portalled to <body>, so they are not in the Tab order.
+  const listId = useId()
+  const options = [...ours.map((p) => ({ key: p.id, pick: () => pickPin(p) })), ...theirs.map((g) => ({ key: g.placeId, pick: () => void pickPlace(g) }))]
+  const [active, setActive] = useState(-1)
+  const at = showPanel && active < options.length ? active : -1
+  const optId = (i: number) => `${listId}-o${i}`
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') close()
+    else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && showPanel) {
+      e.preventDefault()
+      const n = options.length
+      setActive((a) => (e.key === 'ArrowDown' ? (a + 1) % n : (a <= 0 ? n : a) - 1))
+    } else if (e.key === 'Enter' && at >= 0) {
+      e.preventDefault()
+      options[at].pick()
+    }
+  }
+  // Said once the results change (WCAG 4.1.3); empty while the query is too short.
+  const found = !open || short ? '' : showEmpty ? 'Nothing found yet.' : `${options.length} ${options.length === 1 ? 'result' : 'results'}. Use the arrow keys to choose.`
+
   return (
     <div className="top-search-wrap">
       <div className="top-search">
@@ -112,6 +134,11 @@ function SearchBar({ onAccount }: { onAccount: () => void }) {
         <input
           className="top-search__input"
           type="search"
+          role="combobox"
+          aria-expanded={showPanel}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          aria-activedescendant={at >= 0 ? optId(at) : undefined}
           inputMode="search"
           enterKeyHint="search"
           autoComplete="off"
@@ -119,8 +146,8 @@ function SearchBar({ onAccount }: { onAccount: () => void }) {
           aria-label="Search places, pins and events"
           value={q}
           onFocus={() => setOpen(true)}
-          onChange={(e) => { setQ(e.target.value); setOpen(true); if (!e.target.value) end() }}
-          onKeyDown={(e) => e.key === 'Escape' && close()}
+          onChange={(e) => { setQ(e.target.value); setOpen(true); setActive(-1); if (!e.target.value) end() }}
+          onKeyDown={onKeyDown}
         />
         {q && (
           <button type="button" className="top-search__clear" aria-label="Clear search" onClick={clear}>
@@ -131,26 +158,45 @@ function SearchBar({ onAccount }: { onAccount: () => void }) {
           <Icon name="ic-user" size={20} />
         </button>
       </div>
+      <p className="sr-only" role="status">{found}</p>
       {open && createPortal(
         <>
-          <button type="button" className="top-search__dismiss" aria-label="Close search" onClick={close} />
-          {(showPanel || showEmpty) && (
-            <div className="top-results" role="listbox" aria-label="Search results">
-              {ours.length > 0 && <div className="top-results__head">On Push The Pin</div>}
-              {ours.map((p) => (
-                <button key={p.id} type="button" role="option" aria-selected={false} className="top-result" onClick={() => pickPin(p)}>
-                  <span className="top-result__main">{p.title}</span>
-                  {p.placeName && <span className="top-result__sub">{p.placeName}</span>}
-                </button>
-              ))}
-              {theirs.length > 0 && <div className="top-results__head">Places</div>}
-              {theirs.map((g) => (
-                <button key={g.placeId} type="button" role="option" aria-selected={false} className="top-result" onClick={() => pickPlace(g)}>
-                  <span className="top-result__main">{g.main}</span>
-                  {g.secondary && <span className="top-result__sub">{g.secondary}</span>}
-                </button>
-              ))}
-              {showEmpty && <p className="top-results__none">Nothing found yet.</p>}
+          {/* Pointer-only: tapping outside closes; Escape does the same from the keyboard. */}
+          <button type="button" className="top-search__dismiss" aria-hidden tabIndex={-1} onClick={close} />
+          {showPanel && (
+            <div className="top-results" id={listId} role="listbox" aria-label="Search results">
+              {ours.length > 0 && (
+                <div role="group" aria-label="On Push The Pin">
+                  <div className="top-results__head" aria-hidden>On Push The Pin</div>
+                  {ours.map((p, i) => (
+                    <button key={p.id} id={optId(i)} type="button" role="option" tabIndex={-1} aria-selected={at === i}
+                      className={`top-result${at === i ? ' is-active' : ''}`} onClick={() => pickPin(p)}>
+                      <span className="top-result__main">{p.title}</span>
+                      {p.placeName && <span className="top-result__sub">{p.placeName}</span>}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {theirs.length > 0 && (
+                <div role="group" aria-label="Places">
+                  <div className="top-results__head" aria-hidden>Places</div>
+                  {theirs.map((g, j) => {
+                    const i = ours.length + j
+                    return (
+                      <button key={g.placeId} id={optId(i)} type="button" role="option" tabIndex={-1} aria-selected={at === i}
+                        className={`top-result${at === i ? ' is-active' : ''}`} onClick={() => pickPlace(g)}>
+                        <span className="top-result__main">{g.main}</span>
+                        {g.secondary && <span className="top-result__sub">{g.secondary}</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+          {showEmpty && (
+            <div className="top-results" aria-hidden>
+              <p className="top-results__none">Nothing found yet.</p>
             </div>
           )}
         </>,

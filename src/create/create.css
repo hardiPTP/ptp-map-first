@@ -24,6 +24,7 @@
 .create-pin__name--none { color: var(--colour-ink-60); }
 
 .create-panel { position: absolute; left: 0; right: 0; bottom: 0; padding: 14px var(--space-margin) 28px; display: flex; flex-direction: column; gap: 12px; }
+.create-panel__line:focus { outline: none; } /* focused on entry only to be read out */
 .create-panel__line { margin: 0; font: var(--text-card); letter-spacing: var(--text-card-track); color: var(--colour-ink-100); text-align: center; }
 .create-panel__row { display: flex; gap: 10px; }
 .create-panel__row > .ptp-btn--fill { flex: 1; }
@@ -38,7 +39,7 @@
 .create-sheet__spot span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .create-h { margin: 0; font: var(--text-card); letter-spacing: var(--text-card-track); color: var(--colour-ink-100); }
 
-.create-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.create-tiles { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; } /* 3 tiles, or 2 as a place */
 .create-tile {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   min-height: 92px; padding: 12px 6px; border: 0; border-radius: var(--radius-well);
@@ -56,3 +57,11 @@
 .create-error { margin: 0; font: var(--text-body-lg); color: var(--colour-accent-orange-deep); }
 
 .create-snack { position: absolute; left: var(--space-margin); right: var(--space-margin); top: calc(var(--top-bar-h, 156px) + 12px); pointer-events: none !important; }
+.create-hint { margin: 8px 0 0; font: var(--text-meta-lg); color: var(--colour-ink-60); }
+/* Photo preview: the media-inner radius, a quiet line; Remove beside it. */
+.create-photo { display: flex; align-items: center; gap: 12px; }
+.create-photo__img {
+  width: 88px; height: 88px; object-fit: cover; flex: none;
+  border-radius: var(--radius-media-inner); box-shadow: inset 0 0 0 var(--stroke) var(--surface-line);
+}
+.create-sheet:focus { outline: none; } /* focused on open only to move focus in; the controls show the ring */

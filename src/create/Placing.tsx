@@ -56,6 +56,22 @@ export function Placing({ onBack }: { onBack: () => void }) {
     }
   }, [map, places])
 
+  // Tap the map to move the spot there: a single-pointer alternative to dragging the map (WCAG 2.5.7).
+  // Map 'click' gives a MapMouseEvent with latLng: https://developers.google.com/maps/documentation/javascript/reference/map#Map.click
+  useEffect(() => {
+    if (!map) return
+    const l = map.addListener('click', (e: google.maps.MapMouseEvent) => {
+      if (e.latLng) map.panTo(e.latLng)
+    })
+    return () => l.remove()
+  }, [map])
+
+  // Focus the instruction when placing starts (the "+ Pin" button that had focus is gone), so it is read out.
+  const lineRef = useRef<HTMLParagraphElement>(null)
+  useEffect(() => {
+    lineRef.current?.focus()
+  }, [])
+
   useEffect(() => {
     if (!map) return
     const schedule = () => {
@@ -110,7 +126,13 @@ export function Placing({ onBack }: { onBack: () => void }) {
         )}
       </div>
       <div className="ptp-sheet create-panel">
-        <p className="create-panel__line">Move the map to the spot</p>
+        <p className="create-panel__line" tabIndex={-1} ref={lineRef}>
+          Move the map to the spot
+        </p>
+        {/* The pin and its place name are drawn over the map (aria-hidden); the found spot is said here. */}
+        <p className="sr-only" role="status">
+          {found ? `Spot: ${found.place ? found.place.placeName : 'Unnamed spot'}` : ''}
+        </p>
         <div className="create-panel__row">
           <Button onClick={onBack}>Back</Button>
           <Button variant="primary" size="big" fill onClick={use}>

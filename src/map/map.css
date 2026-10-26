@@ -2,40 +2,40 @@
 .map-overlay { position: absolute; left: 0; top: 0; width: 0; height: 0; }
 .map-anchor { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
 
+/* Google-sized round disc, no stem (2026-10-22): 24 disc anchored at its centre. Box maths: lib/tags markerBox. */
 .map-mk {
   --mk: var(--colour-accent-orange);
-  position: absolute; left: -18px; top: -47.5px; width: 36px; height: 50px;
+  position: absolute; left: -12px; top: -12px; width: 24px; height: 24px;
   padding: 0; border: 0; background: none; cursor: pointer; color: var(--surface-paper);
 }
-.map-mk::after { content: ''; position: absolute; inset: -6px -8px; } /* 44px touch target */
+.map-mk::after { content: ''; position: absolute; inset: -10px; } /* 44px touch target */
 /* Colour rule (Figma pin/map): orange = open problem only. Events, places, notices are ink. */
 .map-mk--event { --mk: var(--colour-ink-100); }
 .map-mk--ask { --mk: var(--colour-ink-100); color: var(--colour-ink-100); }
+.map-mk--offer { --mk: var(--colour-ink-100); }
+/* Place posts (PRD "Who posted it"): a solid accent ring. */
+.map-mk.is-place .map-mk__disc { border-color: var(--colour-accent-orange); }
 
 .map-mk__disc {
-  position: absolute; left: 2px; top: 0; width: 32px; height: 32px; box-sizing: border-box;
+  position: absolute; left: 0; top: 0; width: 24px; height: 24px; box-sizing: border-box;
   display: flex; align-items: center; justify-content: center;
   border-radius: var(--radius-pill); background: var(--mk); border: 2px solid var(--surface-paper);
   box-shadow: var(--elev-marker);
 }
 .map-mk--ask .map-mk__disc { background: var(--surface-paper); border-color: var(--colour-ink-100); }
-.map-mk__stalk { position: absolute; left: 17px; top: 35px; width: 2px; height: 10px; background: var(--mk); }
-.map-mk__tip { position: absolute; left: 15.5px; top: 45px; width: 5px; height: 5px; border-radius: 50%; background: var(--mk); }
-
-/* selected: 54x68, tip centre at (27, 65.5) */
-.map-mk.is-selected { left: -27px; top: -65.5px; width: 54px; height: 68px; }
-.map-mk.is-selected .map-mk__disc { left: 11px; top: 11px; }
-.map-mk.is-selected .map-mk__stalk { left: 26px; top: 53px; }
-.map-mk.is-selected .map-mk__tip { left: 24.5px; top: 63px; }
-.map-mk__halo { position: absolute; left: 0; top: 0; width: 54px; height: 54px; border-radius: 50%; background: var(--mk); opacity: 0.18; }
+/* selected: 32 disc centred in a 44 halo, still anchored at the centre */
+.map-mk.is-selected { left: -22px; top: -22px; width: 44px; height: 44px; }
+.map-mk.is-selected::after { inset: 0; }
+.map-mk.is-selected .map-mk__disc { left: 6px; top: 6px; width: 32px; height: 32px; }
+.map-mk__halo { position: absolute; left: 0; top: 0; width: 44px; height: 44px; border-radius: 50%; background: var(--mk); opacity: 0.18; }
 
 /* pulse ring: expanding, pin colour, low opacity. CSS only. */
 .map-mk__pulse {
-  position: absolute; left: 2px; top: 0; width: 32px; height: 32px; box-sizing: border-box;
+  position: absolute; left: 0; top: 0; width: 24px; height: 24px; box-sizing: border-box;
   border: 2px solid var(--mk); border-radius: var(--radius-pill); opacity: 0; pointer-events: none;
   animation: map-pulse 2.2s ease-out infinite;
 }
-.map-mk.is-selected .map-mk__pulse { left: 11px; top: 11px; }
+.map-mk.is-selected .map-mk__pulse { left: 6px; top: 6px; width: 32px; height: 32px; }
 @keyframes map-pulse { 0% { transform: scale(1); opacity: 0.35; } 100% { transform: scale(2.1); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .map-mk__pulse { animation: none; } }
 
@@ -56,7 +56,7 @@
 .map-place::before { content: ''; position: absolute; left: -13px; top: -13px; width: 38px; height: 38px; } /* touch target */
 .map-place__dot {
   width: 10px; height: 10px; box-sizing: border-box; flex: none;
-  border-radius: var(--radius-pill); background: var(--colour-ink-45); border: 1.5px solid var(--surface-paper);
+  border-radius: var(--radius-pill); background: var(--colour-ink-60); border: 1.5px solid var(--surface-paper); /* ink-45 was 2.9:1 on the map (WCAG 1.4.11) */
   box-shadow: 0 1px 2px rgba(23, 20, 15, 0.2);
 }
 .map-place__name {

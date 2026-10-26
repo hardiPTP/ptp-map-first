@@ -45,7 +45,7 @@ export default function KitchenSink() {
 
       <section className="ks-s">
         <h2 className="ks-sh">Chips</h2>
-        <div className="ks-row" role="radiogroup" aria-label="Filter">
+        <div className="ks-row" role="group" aria-label="Filter">
           {['All', 'Issues', 'Events', 'Asks'].map((c) => (
             <Chip key={c} selected={chip === c} onClick={() => setChip(c)}>{c}</Chip>
           ))}

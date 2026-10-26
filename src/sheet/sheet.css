@@ -38,7 +38,7 @@
 .sheet-header__area {
   display: inline-flex; align-items: center; gap: 2px; min-height: var(--space-touch-min); margin: -8px 0;
   padding: 0; border: 0; background: none;
-  font: inherit; letter-spacing: inherit; color: var(--colour-accent-orange); text-align: left;
+  font: inherit; letter-spacing: inherit; color: var(--colour-accent-orange-deep); text-align: left; /* orange is 3.9:1 on the glass, 23 px is not large text (WCAG 1.4.3) */
 }
 .sheet-header__area:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 6px; }
 .sheet-header__sub { margin: 4px 0 0; font: var(--text-meta-lg); color: var(--colour-ink-60); }
@@ -121,3 +121,22 @@
 .sheet-place__meta { display: block; font: var(--text-meta-lg); color: var(--colour-ink-60); }
 .sheet-place__dist { flex: none; font: var(--text-meta-lg); color: var(--colour-ink-60); }
 .sheet-empty { margin: 0; padding: 8px 4px; font: var(--text-meta-lg); color: var(--colour-ink-60); }
+
+/* "@ Place" (DECISIONS.md 2026-10-22): opens everything posted at that place. Same text, just tappable. */
+.sheet-card__at { padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.sheet-card__at:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-pill); }
+
+/* ---------- Claiming a place (DECISIONS.md 2026-10-22). Tokens only. ---------- */
+.claim-link {
+  padding: 0; min-height: var(--space-touch-min); border: 0; background: none; cursor: pointer;
+  font: var(--text-label-lg); color: var(--colour-accent-orange-deep); text-decoration: underline;
+}
+.claim-link:focus-visible, .sheet-header__back:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 6px; }
+.claim-note { margin: 0; display: inline-flex; align-items: center; gap: 6px; font: var(--text-meta-lg); color: var(--colour-ink-60); }
+.claim-lead { margin: 0; font: var(--text-body-lg); color: var(--colour-ink-100); }
+.claim-lead:focus { outline: none; } /* focused only to be read out when the claim is sent */
+.claim-points { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.claim-points li { display: flex; align-items: flex-start; gap: 10px; font: var(--text-body); color: var(--colour-ink-80); }
+.claim-points li > .ptp-icon { flex: none; margin-top: 2px; }
+.claim-points strong { font-weight: inherit; color: var(--colour-ink-100); }
+.claim-error { margin: 0; font: var(--text-meta-lg); color: var(--colour-accent-orange-deep); }

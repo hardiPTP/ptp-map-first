@@ -212,10 +212,13 @@ export function Field(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={['ptp-field', props.className].filter(Boolean).join(' ')} />
 }
 
-/** Figma "snack" (3539:2976): ink, never orange. */
+/**
+ * Figma "snack" (3539:2976): ink, never orange. Put it inside a live region (role="status") that is rendered
+ * before the snack appears: a region that mounts together with its text is often not read out (WCAG 4.1.3).
+ */
 export function Snack({ children }: { children: ReactNode }) {
   return (
-    <div className="ptp-snack" role="status">
+    <div className="ptp-snack">
       <Icon name="snack-check" size={18} tint={false} />
       <span>{children}</span>
     </div>

@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 // Google is mocked: no map, no places library, no network.
 vi.mock('@vis.gl/react-google-maps', () => ({ useMap: () => null, useMapsLibrary: () => null }))
 vi.mock('../../src/data', () => ({ repo: { createPin: vi.fn() } }))
+// The canvas is not in jsdom: shrinking is stubbed (lib/photo is tested on its own).
+vi.mock('../../src/lib/photo', () => ({ shrinkPhoto: vi.fn(async () => 'data:image/jpeg;base64,QUJD') }))
 
 import { repo } from '../../src/data'
 import { CreateLayer, PinButton } from '../../src/create'
@@ -17,7 +19,7 @@ const createPin = vi.mocked(repo.createPin)
 beforeEach(() => {
   cleanup()
   vi.clearAllMocks()
-  useStore.setState({ pins: [], sheetHeight: 'half', selectedPinId: null })
+  useStore.setState({ pins: [], sheetHeight: 'half', selectedPinId: null, claims: [], deviceId: 'me' })
   useStore.getState().cancelCreate()
 })
 
@@ -198,5 +200,93 @@ describe('back paths', () => {
     expect(useStore.getState().create.step).toBe('placing')
     act(() => void window.dispatchEvent(new PopStateEvent('popstate')))
     expect(useStore.getState().create.step).toBe('idle')
+  })
+})
+
+describe('posting as a claimed place (DECISIONS.md 2026-10-22)', () => {
+  const claim = (status: 'pending' | 'active', deviceId = 'me') => ({
+    id: 'pid', placeId: 'pid', placeName: 'Test Spot', deviceId, status, plan: 'monthly' as const, priceUsd: 100, paid: true, createdAt: 0,
+  })
+  const asPlace = () =>
+    act(() => {
+      useStore.getState().startCreate()
+      useStore.getState().confirmSpot(spot, { placeId: 'pid', placeName: 'Test Spot' }, { asPlace: true })
+    })
+
+  it('no "Post as" choice without an active claim of your own (pending, or someone else\'s)', () => {
+    render(<CreateLayer />)
+    openDetails()
+    expect(screen.queryByRole('radiogroup', { name: 'Post as' })).toBeNull()
+    act(() => useStore.setState({ claims: [claim('pending')] }))
+    expect(screen.queryByRole('radiogroup', { name: 'Post as' })).toBeNull()
+    act(() => useStore.setState({ claims: [claim('active', 'someone-else')] }))
+    expect(screen.queryByRole('radiogroup', { name: 'Post as' })).toBeNull()
+    expect(screen.queryByRole('radio', { name: 'Offer' })).toBeNull()
+  })
+
+  it('with an active claim: Post as Neighbour or the place; as the place, Offer or Event only', () => {
+    useStore.setState({ claims: [claim('active')] })
+    render(<CreateLayer />)
+    asPlace()
+    expect(screen.getByRole('radio', { name: 'Test Spot' })).toHaveAttribute('aria-checked', 'true')
+    expect(tile('Offer')).toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: 'Issue' })).toBeNull()
+    fireEvent.click(screen.getByRole('radio', { name: 'Neighbour' }))
+    expect(tile('Issue')).toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: 'Offer' })).toBeNull()
+  })
+
+  it('posts an offer as the place, with its last day', async () => {
+    useStore.setState({ claims: [claim('active')] })
+    createPin.mockResolvedValue({ id: 'new2', lat: 1, lng: 1 } as never)
+    render(<CreateLayer />)
+    asPlace()
+    fireEvent.click(tile('Offer'))
+    expect(screen.getByText(/shown a little below their posts/)).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: '20% off evening batches' } })
+    fireEvent.click(post())
+    await waitFor(() => expect(createPin).toHaveBeenCalled())
+    const arg = createPin.mock.calls[0][0]
+    expect(arg).toMatchObject({ type: 'offer', asPlace: true, placeId: 'pid', title: '20% off evening batches' })
+    expect(arg.endsAt).toBeGreaterThan(Date.now())
+  })
+})
+
+describe('adding a photo (DECISIONS.md 2026-10-23)', () => {
+  it('picked photo is shrunk, previewed, removable, and posted with the pin', async () => {
+    createPin.mockResolvedValue({ id: 'new3', lat: 1, lng: 1 } as never)
+    render(<CreateLayer />)
+    openDetails()
+    fireEvent.click(tile('Issue'))
+    expect(screen.getByRole('button', { name: 'Add photo' })).toBeInTheDocument()
+    const file = new File(['x'], 'pothole.jpg', { type: 'image/jpeg' })
+    fireEvent.change(screen.getByTestId('create-photo-input'), { target: { files: [file] } })
+    expect(await screen.findByAltText('Your photo')).toHaveAttribute('src', 'data:image/jpeg;base64,QUJD')
+    fireEvent.click(screen.getByRole('button', { name: 'Remove' }))
+    expect(screen.queryByAltText('Your photo')).toBeNull()
+    fireEvent.change(screen.getByTestId('create-photo-input'), { target: { files: [file] } })
+    await screen.findByAltText('Your photo')
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Pothole outside no. 12' } })
+    fireEvent.click(post())
+    await waitFor(() => expect(createPin).toHaveBeenCalled())
+    expect(createPin.mock.calls[0][0]).toMatchObject({ type: 'civic', photo: 'data:image/jpeg;base64,QUJD' })
+  })
+})
+
+describe('keyboard and screen readers (docs/A11Y.md P2)', () => {
+  it('focus moves into the details sheet; Escape steps back', () => {
+    render(<CreateLayer />)
+    openDetails({ skip: true })
+    expect(document.activeElement).toBe(screen.getByTestId('create-sheet'))
+    fireEvent.keyDown(screen.getByTestId('create-sheet'), { key: 'Escape' })
+    expect(useStore.getState().create.step).toBe('idle')
+  })
+  it('the reason Post is disabled is tied to the title field', () => {
+    render(<CreateLayer />)
+    openDetails()
+    fireEvent.click(tile('Ask'))
+    expect(screen.getByLabelText('Title')).toHaveAccessibleDescription('Add a title, 3 letters or more')
+    fireEvent.change(screen.getByLabelText('Title'), { target: { value: 'Need a ladder' } })
+    expect(screen.getByLabelText('Title')).not.toHaveAttribute('aria-describedby')
   })
 })

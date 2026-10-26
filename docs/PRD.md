@@ -52,7 +52,7 @@ Tapping a pin or a card opens the existing v1 story-style detail view (Figma nod
 5. Write a title on one line. The placeholder shows an example for that type. Events also get day chips (Today, Tomorrow, Pick a date) and a time picker.
 6. Tap Post. The pin drops with a pulse, and its card goes to the top of Pulse as "Just now".
 
-Back exits at any step. Long-press on the map jumps straight to step 4 at that spot. No photos in this build.
+Back exits at any step. Long-press on the map jumps straight to step 4 at that spot. One optional photo per pin (Addendum 2026-10-22, 2026-10-23).
 
 ## Pin types and the card
 
@@ -83,7 +83,7 @@ No user's name is ever shown in the feed or on the map. Users see their own name
 | Place | Place name, verified mark, its Google photo as a small avatar | Marker with a solid accent ring | Only accounts linked to a claimed Google place |
 | Push The Pin | PTP mark and "Push The Pin", on an accent orange edge | No marker; area shows only when tapped | Only the PTP team |
 
-Nobody can choose Place or Push The Pin in the creation flow. In the prototype these posts are seeded or entered by the team directly in the database. Every pin stores the posting device ID (never shown) so abuse can be traced.
+Nobody can choose Push The Pin in the creation flow. Place: only a device holding an active claim on that Google place (Addendum 2026-10-22, round 2). In the prototype these posts are seeded or entered by the team directly in the database. Every pin stores the posting device ID (never shown) so abuse can be traced.
 
 ## Area updates
 
@@ -180,9 +180,28 @@ No generic AI look:
 
 Done means: screenshots of home at all three sheet heights, the creation flow, a card and the area strip, side by side with the Figma frame; anything that would not pass as part of the Figma file is fixed.
 
+## Addendum 2026-10-22: name labels and opinion bubbles
+
+Asked for by the team after v0.1; details in docs/DECISIONS.md (2026-10-22).
+
+- Name labels: the place name under each pin at zoom 16+, and always on the selected pin. text/micro, ink-80, white halo. Labels never collide (same overlap check as tags). Never a person's name.
+- Comments: { id, pinId, text (max 280), createdAt, deviceId (never shown), status live | under_review }. New comments post as under_review; only live comments show.
+- Opinion bubbles: a small speech bubble above a pin with its newest live comment, "quote" (60 characters max), then "Neighbour, 2h". At most 3 on screen, picked by tag score, recomputed on map idle only, no timers. A pin shows a tag or a bubble, never both. Tapping a bubble opens the detail view at its comments, with an "Add what you saw" field.
+
+Round 2 (same day, asked for by the team; details in docs/DECISIONS.md 2026-10-22 round 2):
+
+- Pins: Google-sized round discs (24 px, no stem), anchored at the centre; the selected pin is a 32 px disc in a halo.
+- Pin text replaces name labels: the post's title right of the pin, Google style, then its tag. The most relevant pins get text first and more appear as you zoom in (only the selected pin at zoom 13 and below).
+- Opinion bubbles: "@ Place" on top (tap: everything posted at that place), the quote, then "500 m away" and "+2" when there are more comments. Several can show at once (still at most 3); a bubble opens below its pin when the spot above is taken.
+- Merging (2026-10-23): neighbours posting the same kind of thing at the same spot (within 30 m; an issue never merges with an ask) show as one marker with "+N", N = how many others posted it. This replaces the civic "busy" tag (up arrow + count).
+- Photos (2026-10-23): one optional photo per pin, shrunk on the phone, shown in the detail view straight away.
+- Popups (2026-10-23): Pulse on the map. Any pin can get a popup, the most important and recent first (the feed's ranking, near the middle of the view), more as you zoom in (2 at zoom 14 up to 5 at 17+, none at cluster zooms); zoomed in on one pin, it shows its popup. A pin with comments shows its newest comment; any other pin shows its title, with the time for events and the last day for offers.
+- "@ Place" on cards and the detail view opens the same place list.
+- Claimed places: a business claims its Google place for $100 a month (mock checkout in the prototype, nothing charged). The team checks each claim. With an active claim the device can post as the place: an Offer ("20% off this week", with a last day) or an Event. Offers are marked "Offer" and rank a little below neighbours' posts (x0.8). Everyone else keeps posting as Neighbour.
+
 ## Out of scope
 
-Neighbour verification loop, login, photos, notifications, moderation, Listing / Deal / Moment pins, outside event feeds, personal-history interest scoring. Traffic automation is a follow-up phase.
+Neighbour verification loop, login, photo review (photos show straight away), notifications, moderation tools (comments wait as under_review; making them live is done by the team in the database), Listing / Moment pins (Deal pins: see Offers, Addendum 2026-10-22), real billing for claims, outside event feeds, personal-history interest scoring. Traffic automation is a follow-up phase.
 
 ## Risks
 

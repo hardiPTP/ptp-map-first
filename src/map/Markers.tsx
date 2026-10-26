@@ -10,19 +10,40 @@ import type { NearbyPlace } from '../types'
 import type { Pin } from '../types'
 import { clusterPins, type Cluster } from './cluster'
 import { createMarkerOverlay, type MarkerOverlay } from './overlay'
+import { revealOnFocus } from './reveal'
 import { useLongPress } from './useLongPress'
-import { useVisiblePins } from './visible'
+import { useMapPins } from './visible'
 import './map.css'
 
 const clock = () => Date.now()
 
-function Glyph({ pin }: { pin: Pin }) {
-  if (pin.type === 'civic') return <Icon name="pin-icon-warning" size={16} tint={false} />
-  if (pin.type === 'event') return <Icon name="pin-icon-calendar" size={16} tint={false} />
-  return <Icon name="ic-bubble" size={16} />
+/** The glyph's meaning, spoken with the title (WCAG 1.1.1): the disc shape and symbol carry the type. */
+const TYPE_WORD: Record<Pin['type'], string> = { civic: 'Issue', event: 'Event', ask: 'Ask', offer: 'Offer', area: 'Notice' }
+
+/** Accessible name of a pin marker: type, title, then what the pulse ring and the merge say. */
+export function markerLabel(pin: Pin, merged: number, pulse: boolean): string {
+  const parts = [`${TYPE_WORD[pin.type]}: ${pin.title}`]
+  if (pin.postedAs === 'place' && pin.placeName) parts.push(`posted by ${pin.placeName}`)
+  if (merged) parts.push(`and ${merged} similar ${merged === 1 ? 'post' : 'posts'} here`)
+  if (pulse) parts.push('recent activity')
+  return parts.join(', ')
 }
 
-function PinMarker({ pin, selected, pulse }: { pin: Pin; selected: boolean; pulse: boolean }) {
+/** 12 px in the 24 disc, 16 in the selected 32 disc. Offers (a claimed place's deal): ic-heart, the nearest glyph. */
+function Glyph({ pin, selected }: { pin: Pin; selected: boolean }) {
+  const size = selected ? 16 : 12
+  if (pin.type === 'civic') return <Icon name="pin-icon-warning" size={size} tint={false} />
+  if (pin.type === 'event') return <Icon name="pin-icon-calendar" size={size} tint={false} />
+  if (pin.type === 'offer') return <Icon name="ic-heart" size={size} />
+  return <Icon name="ic-bubble" size={size} />
+}
+
+/**
+ * `selected` is the selected or feed-highlighted pin (bigger disc). Only the truly selected pin is raised above
+ * others (`raised`): the map layers decide which of two stacked pins carries words without following the feed
+ * highlight, so the stacking order must not follow it either (lib/tags coveredPins).
+ */
+function PinMarker({ pin, selected, raised, pulse, merged }: { pin: Pin; selected: boolean; raised: boolean; pulse: boolean; merged: number }) {
   const select = () => {
     const s = useStore.getState()
     s.selectPin(pin.id)
@@ -32,14 +53,19 @@ function PinMarker({ pin, selected, pulse }: { pin: Pin; selected: boolean; puls
     .filter(Boolean)
     .join(' ')
   return (
-    <div className="map-anchor" data-lat={pin.lat} data-lng={pin.lng} style={{ zIndex: selected ? 3 : 2 }}>
-      <button type="button" className={cls} aria-label={pin.title} aria-pressed={selected} onClick={select}>
+    <div className="map-anchor" data-lat={pin.lat} data-lng={pin.lng} style={{ zIndex: raised ? 3 : 2 }}>
+      <button
+        type="button"
+        className={cls}
+        aria-label={markerLabel(pin, merged, pulse)}
+        aria-haspopup="dialog"
+        onClick={select}
+        onFocus={(e) => revealOnFocus(e, pin)}
+      >
         {selected && <span className="map-mk__halo" />}
         {pulse && <span className="map-mk__pulse" />}
-        <span className="map-mk__stalk" />
-        <span className="map-mk__tip" />
         <span className="map-mk__disc">
-          <Glyph pin={pin} />
+          <Glyph pin={pin} selected={selected} />
         </span>
       </button>
     </div>
@@ -61,6 +87,7 @@ function PlaceDot({ place, labelled, selected }: { place: NearbyPlace; labelled:
         className={['map-place', selected && 'is-selected'].filter(Boolean).join(' ')}
         aria-label={[place.name, place.kind].filter(Boolean).join(', ')}
         onClick={pick}
+        onFocus={(e) => revealOnFocus(e, place)}
       >
         <span className="map-place__dot" />
         {(labelled || selected) && <span className="map-place__name">{place.name}</span>}
@@ -110,6 +137,7 @@ function ClusterMarker({ cluster, zoom }: { cluster: Cluster; zoom: number }) {
         className="map-cluster"
         aria-label={`${cluster.count} pins, zoom in`}
         onClick={() => useStore.getState().requestFlyTo({ lat: cluster.lat, lng: cluster.lng, zoom: zoom + 2 })}
+        onFocus={(e) => revealOnFocus(e, cluster)}
       >
         {cluster.count}
       </button>
@@ -120,7 +148,7 @@ function ClusterMarker({ cluster, zoom }: { cluster: Cluster; zoom: number }) {
 function YouMarker({ at }: { at: { lat: number; lng: number } }) {
   return (
     <div className="map-anchor" data-lat={at.lat} data-lng={at.lng} style={{ zIndex: 1 }}>
-      <span className="map-you">
+      <span className="map-you" role="img" aria-label="You are here">
         <Icon name="pin-you" size={44} tint={false} />
       </span>
     </div>
@@ -131,7 +159,7 @@ export function Markers() {
   const map = useMap()
   const [host, setHost] = useState<HTMLDivElement | null>(null)
   const overlayRef = useRef<MarkerOverlay | null>(null)
-  const pins = useVisiblePins()
+  const { pins, others } = useMapPins()
   const supports = useStore((s) => s.supports)
   const zoom = useStore((s) => s.viewport.zoom)
   const selectedId = useStore((s) => s.selectedPinId)
@@ -154,6 +182,13 @@ export function Markers() {
   }, [map])
 
   useLongPress(map, overlayRef)
+
+  // A feed card whose pin is merged into another lights up that group's marker.
+  const lit = useMemo(() => {
+    if (!highlightId || pins.some((p) => p.id === highlightId)) return highlightId
+    for (const [lead, ids] of others) if (ids.includes(highlightId)) return lead
+    return null
+  }, [pins, others, highlightId])
 
   const { singles, clusters } = useMemo(() => {
     const keep = new Set([selectedId, highlightId].filter((x): x is string => !!x))
@@ -183,7 +218,9 @@ export function Markers() {
         <PinMarker
           key={p.id}
           pin={p}
-          selected={p.id === selectedId || p.id === highlightId}
+          selected={p.id === selectedId || p.id === lit}
+          raised={p.id === selectedId}
+          merged={others.get(p.id)?.length ?? 0}
           pulse={isPulsing(p, supports, now)}
         />
       ))}

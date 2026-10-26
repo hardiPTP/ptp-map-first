@@ -1,8 +1,9 @@
 rules_version = '2';
 // Docs: https://firebase.google.com/docs/firestore/security/rules-fields
 // PRD Risks: anyone can post without login; rules check types and lengths only.
-// Clients may only write postedAs == "neighbour". Place and Push The Pin posts are seeded
-// by the team with the Admin SDK, which bypasses these rules.
+// Clients write postedAs == "neighbour", or "place" when the device holds an ACTIVE claim on that placeId
+// (DECISIONS.md 2026-10-22). Push The Pin posts and claim approval are done by the team with the Admin SDK,
+// which bypasses these rules.
 service cloud.firestore {
   match /databases/{database}/documents {
 
@@ -15,7 +16,8 @@ service cloud.firestore {
     function validNewPin(d) {
       return d.keys().hasAll(['type', 'title', 'lat', 'lng', 'createdAt', 'createdBy', 'postedAs', 'status'])
         && d.keys().hasOnly(['type', 'title', 'body', 'lat', 'lng', 'placeId', 'placeName',
-                             'startsAt', 'createdAt', 'createdBy', 'lastSupportAt', 'postedAs', 'status'])
+                             'startsAt', 'createdAt', 'createdBy', 'lastSupportAt', 'postedAs', 'status', 'hasPhoto'])
+        && (!('hasPhoto' in d) || d.hasPhoto is bool)
         && d.type in ['civic', 'event', 'ask']
         && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
         && optString(d, 'body', 1000)
@@ -32,9 +34,37 @@ service cloud.firestore {
         && d.status == 'active';
     }
 
+    // A claimed place posts an offer (with an end) or an event, under its own claimed placeId and name.
+    function validPlacePin(d) {
+      let claim = get(/databases/$(database)/documents/claims/$(d.placeId)).data;
+      return d.keys().hasAll(['type', 'title', 'lat', 'lng', 'placeId', 'placeName', 'createdAt', 'createdBy', 'postedAs', 'status'])
+        && d.keys().hasOnly(['type', 'title', 'body', 'lat', 'lng', 'placeId', 'placeName',
+                             'startsAt', 'endsAt', 'createdAt', 'createdBy', 'lastSupportAt', 'postedAs', 'status', 'hasPhoto'])
+        && (!('hasPhoto' in d) || d.hasPhoto is bool)
+        && d.type in ['offer', 'event']
+        && d.title is string && d.title.size() >= 3 && d.title.size() <= 120
+        && optString(d, 'body', 1000)
+        && d.lat is number && d.lat >= -90 && d.lat <= 90
+        && d.lng is number && d.lng >= -180 && d.lng <= 180
+        && d.placeId is string
+        && (d.type != 'event' || d.startsAt is number)
+        && (d.type != 'offer' || d.endsAt is number)
+        && optNumber(d, 'startsAt')
+        && optNumber(d, 'endsAt')
+        && optNumber(d, 'lastSupportAt')
+        && d.createdAt is number
+        && d.createdBy == request.auth.uid
+        && d.postedAs == 'place'
+        && d.status == 'active'
+        && exists(/databases/$(database)/documents/claims/$(d.placeId))
+        && claim.deviceId == request.auth.uid
+        && claim.status == 'active'
+        && d.placeName == claim.placeName;
+    }
+
     match /pins/{pinId} {
       allow read: if true;
-      allow create: if signedIn() && validNewPin(request.resource.data);
+      allow create: if signedIn() && (validNewPin(request.resource.data) || validPlacePin(request.resource.data));
       // Supporting bumps lastSupportAt; nothing else may change from a client.
       allow update: if signedIn()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastSupportAt'])
@@ -53,6 +83,60 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/pins/$(request.resource.data.pinId));
       allow update: if false;
       allow delete: if signedIn() && resource.data.deviceId == request.auth.uid;
+    }
+
+    // Comments (DECISIONS.md 2026-10-22). Clients only ever create "under_review"; the team sets "live"
+    // with the Admin SDK. Everyone reads live comments; a device can also read its own pending ones.
+    match /comments/{commentId} {
+      allow read: if resource.data.status == 'live'
+        || (signedIn() && resource.data.deviceId == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['pinId', 'text', 'createdAt', 'deviceId', 'status'])
+        && request.resource.data.keys().hasAll(['pinId', 'text', 'createdAt', 'deviceId', 'status'])
+        && request.resource.data.pinId is string
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 1 && request.resource.data.text.size() <= 280
+        && request.resource.data.createdAt is number
+        && request.resource.data.deviceId == request.auth.uid
+        && request.resource.data.status == 'under_review'
+        && exists(/databases/$(database)/documents/pins/$(request.resource.data.pinId));
+      allow update, delete: if false;
+    }
+
+    // Pin photos (DECISIONS.md 2026-10-23): one per pin, doc id = pin id, written by the pin's poster right after the
+    // pin. A small JPEG data URL (the phone shrinks it). Public straight away (the human's choice); nobody edits them.
+    match /pinPhotos/{pinId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['pinId', 'dataUrl', 'deviceId', 'createdAt'])
+        && request.resource.data.keys().hasAll(['pinId', 'dataUrl', 'deviceId', 'createdAt'])
+        && request.resource.data.pinId == pinId
+        && request.resource.data.dataUrl is string
+        && request.resource.data.dataUrl.size() <= 400000
+        && request.resource.data.dataUrl.matches('^data:image/jpeg;base64,[A-Za-z0-9+/=]+$')
+        && request.resource.data.deviceId == request.auth.uid
+        && request.resource.data.createdAt is number
+        && get(/databases/$(database)/documents/pins/$(pinId)).data.createdBy == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Place claims (DECISIONS.md 2026-10-22). Doc id = placeId: one claim per place, and a second write would be
+    // an update, which is denied. Clients only create "pending" (after the mock checkout); the team sets "active".
+    match /claims/{placeId} {
+      allow read: if true;
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['placeId', 'placeName', 'deviceId', 'status', 'plan', 'priceUsd', 'paid', 'createdAt'])
+        && request.resource.data.keys().hasAll(['placeId', 'placeName', 'deviceId', 'status', 'plan', 'priceUsd', 'paid', 'createdAt'])
+        && request.resource.data.placeId == placeId
+        && request.resource.data.placeName is string
+        && request.resource.data.placeName.size() >= 1 && request.resource.data.placeName.size() <= 200
+        && request.resource.data.deviceId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.plan == 'monthly'
+        && request.resource.data.priceUsd == 100
+        && request.resource.data.paid is bool
+        && request.resource.data.createdAt is number;
+      allow update, delete: if false;
     }
   }
 }

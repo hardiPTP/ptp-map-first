@@ -1,27 +1,38 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useId, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Field, Grabber, Icon, SheetSurface } from '../design/primitives'
+import { useModal } from '../design/useModal'
 import { distanceM } from '../lib/geo'
 import { requestLocation } from '../lib/locate'
 import { AREA_NAME, BANDRA_WEST, DEFAULT_ZOOM, useStore } from '../store'
 import { loadName, saveName } from './account'
 import './top.css'
 
-/** Sheet at z 50, portalled to body so the top layer's stacking context does not cap it. */
-function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
-  useEffect(() => {
-    const k = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', k)
-    return () => window.removeEventListener('keydown', k)
-  }, [onClose])
+/**
+ * Sheet at z 50, portalled to body so the top layer's stacking context does not cap it. A modal dialog
+ * (design/useModal): focus moves in, Tab stays inside, Escape closes, focus returns to the opener.
+ */
+export function Sheet({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const onKeyDown = useModal(ref, onClose)
+  const titleId = useId()
   return createPortal(
     <div className="top-sheet-layer">
-      <button type="button" className="top-scrim" aria-label="Close" onClick={onClose} />
-      <SheetSurface className="top-sheet" role="dialog" aria-modal="true" aria-label={title}>
+      {/* Pointer-only: the grabber below is the keyboard and screen reader close. */}
+      <button type="button" className="top-scrim" aria-hidden tabIndex={-1} onClick={onClose} />
+      <SheetSurface
+        {...({ ref } as object)}
+        className="top-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
+      >
         <button type="button" className="top-grabber" aria-label="Close" onClick={onClose}>
           <Grabber />
         </button>
-        <h2 className="top-sheet__title">{title}</h2>
+        <h2 className="top-sheet__title" id={titleId}>{title}</h2>
         {children}
       </SheetSurface>
     </div>,
@@ -60,6 +71,7 @@ export function AreaSheet({ onClose }: { onClose: () => void }) {
     onClose()
   }
 
+  const deniedText = `Location is off for this site, so we are staying on ${AREA_NAME}. Turn it on in your browser settings to use Near me.`
   return (
     <Sheet title="Switch area" onClose={onClose}>
       <div role="radiogroup" aria-label="Area" className="top-rows">
@@ -68,11 +80,11 @@ export function AreaSheet({ onClose }: { onClose: () => void }) {
         <AreaRow label="Near me" selected={areaMode === 'nearMe'} icon="row-area-location" onClick={pickNearMe}
           value={busy ? 'Finding you' : ''} />
       </div>
-      {denied && (
-        <p className="top-note" role="status">
-          Location is off for this site, so we are staying on {AREA_NAME}. Turn it on in your browser settings to use Near me.
-        </p>
-      )}
+      {/* The live region is always rendered, so the message is announced when it appears (WCAG 4.1.3). */}
+      <p className="sr-only" role="status">
+        {busy ? 'Finding you' : denied ? deniedText : ''}
+      </p>
+      {denied && <p className="top-note">{deniedText}</p>}
     </Sheet>
   )
 }
@@ -113,7 +125,7 @@ export function AccountSheet({ onClose }: { onClose: () => void }) {
   return (
     <Sheet title="Your account" onClose={onClose}>
       <label className="top-label" htmlFor="top-name">Your name</label>
-      <Field id="top-name" value={name} placeholder="Only you see this, on this phone" autoComplete="off"
+      <Field id="top-name" value={name} placeholder="Only you see this, on this phone" autoComplete="nickname"
         onChange={(e) => { setName(e.target.value); saveName(e.target.value) }} />
       <p className="top-note">Neighbours never see your name. You post as Neighbour.</p>
       <h3 className="top-sheet__sub">My pins</h3>

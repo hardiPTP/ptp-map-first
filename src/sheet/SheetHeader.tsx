@@ -6,6 +6,7 @@ import { formatWalk, walkMin } from '../lib/geo'
 import { AREA_NAME, BANDRA_WEST, useStore } from '../store'
 import { AreaSheet } from '../top/Sheets'
 import type { SheetHeight } from '../types'
+import { ClaimRow } from './Claim'
 import type { FeedResult } from './useFeed'
 
 export function headerCopy(args: {
@@ -31,6 +32,7 @@ export function headerCopy(args: {
   return { title, sub }
 }
 
+/** The count line is a polite live region: a filter, search or pan that changes what is in range is read out (WCAG 4.1.3). */
 export function SheetHeader({ feed, height, onPill }: { feed: FeedResult; height: SheetHeight; onPill: () => void }) {
   const areaMode = useStore((s) => s.areaMode)
   const searchPlace = useStore((s) => s.searchPlace)
@@ -48,7 +50,7 @@ export function SheetHeader({ feed, height, onPill }: { feed: FeedResult; height
         {searchPlace ? (
           <>
             <h2 className="sheet-header__title">{title}</h2>
-            <p className="sheet-header__sub">
+            <p className="sheet-header__sub" aria-live="polite">
               {[
                 place?.kind,
                 place?.openNow == null ? null : place.openNow ? 'Open now' : 'Closed now',
@@ -72,6 +74,11 @@ export function SheetHeader({ feed, height, onPill }: { feed: FeedResult; height
                 Back to nearby
               </button>
             </div>
+            {place && (
+              <div className="sheet-header__row">
+                <ClaimRow place={place} />
+              </div>
+            )}
           </>
         ) : (
           <>
@@ -82,7 +89,7 @@ export function SheetHeader({ feed, height, onPill }: { feed: FeedResult; height
                 <Icon name="heading-sort-chevron-down-22" size={20} tint={false} />
               </button>
             </h2>
-            <p className="sheet-header__sub">{sub}</p>
+            <p className="sheet-header__sub" aria-live="polite">{sub}</p>
           </>
         )}
       </div>

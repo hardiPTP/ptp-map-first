@@ -9,3 +9,9 @@
   display: flex; flex-direction: column; align-items: flex-end; gap: 12px;
   transition: bottom 240ms ease;
 }
+
+/* Zoom in / out: a tight pair, so it reads as one control. */
+.app-zoom { display: flex; flex-direction: column; gap: 6px; }
+
+/* Detail view sits on the live map: the home top bar, sheet and buttons step aside. */
+.has-detail .app-top, .has-detail .sheet-wrap, .has-detail .app-fabs { visibility: hidden; }

@@ -1,9 +1,10 @@
 /* Map tags. Tokens only. The Tag primitive supplies the pill; this positions it beside the marker. */
 .map-tag-anchor { position: absolute; left: 0; top: 0; width: 0; height: 0; will-change: transform; }
+/* Slot right of the pin: 4 px right of the disc, centred on it (lib/tags pinTagBox / pinTextBox). */
 .map-tag {
-  position: absolute; left: 22px; top: -43.5px; padding: 0; border: 0; background: none; cursor: pointer;
+  position: absolute; left: 16px; top: -12px; padding: 0; border: 0; background: none; cursor: pointer;
 }
-.map-tag.is-selected { top: -50.5px; }
+.map-tag.is-selected { left: 20px; }
 .map-tag.is-cluster { left: 28px; top: -12px; }
 .map-tag::after { content: ''; position: absolute; inset: -10px -4px; } /* 44px touch target */
 
@@ -14,4 +15,56 @@
 .map-tag__ring.is-past .map-tag__ring-track,
 .map-tag__ring.is-past .map-tag__ring-fill { stroke: var(--colour-accent-orange-deep); }
 .map-tag__avatar { display: block; width: 14px; height: 14px; border-radius: var(--radius-pill); background: var(--surface-well); box-shadow: inset 0 0 0 var(--stroke) var(--surface-line); }
-.map-tag__arrow { display: inline-flex; }
+
+/* Pin text, Google style (DECISIONS.md 2026-10-22): the title right of the pin, text/label, ink, paper halo,
+   at most 120 wide (ellipsis); the pin's tag follows it. Centred on the disc: a 24 tall row around the anchor. */
+.map-text {
+  position: absolute; left: 16px; top: -12px; height: 24px; display: flex; align-items: center; gap: 4px;
+  padding: 0; border: 0; background: none; cursor: pointer; white-space: nowrap;
+}
+.map-text.is-selected { left: 20px; }
+.map-text::after { content: ''; position: absolute; inset: -10px -4px; } /* 44px touch target */
+.map-text__name {
+  max-width: 120px; overflow: hidden; text-overflow: ellipsis; padding: 0 2px;
+  font: var(--text-label); color: var(--colour-ink-100);
+  text-shadow: 0 0 2px var(--surface-paper), 0 0 2px var(--surface-paper), 0 0 3px var(--surface-paper);
+}
+.map-text:focus-visible { outline: none; }
+.map-text:focus-visible .map-text__name { box-shadow: var(--focus-ring); border-radius: var(--radius-pill); }
+
+/* Opinion bubble: paper, raise-s (the Tag surface), radius media-inner, 7 px tail pointing at the marker.
+   Box maths in lib/tags bubbleBox: max 168 wide; "@ Place", quote up to 2 lines, "500 m away" and "+2". */
+.map-bubble {
+  position: absolute; left: 0; bottom: 14px; transform: translateX(calc(-50% + var(--bubble-dx, 0px)));
+  display: flex; flex-direction: column; gap: 2px; width: max-content; max-width: 168px; box-sizing: border-box;
+  padding: 8px 10px; border-radius: var(--radius-media-inner); background: var(--surface-paper);
+  box-shadow: var(--elev-raise-s); color: var(--colour-ink-100);
+}
+.map-bubble::after {
+  content: ''; position: absolute; left: calc(50% - var(--bubble-dx, 0px)); top: 100%; width: 12px; height: 7px; margin-left: -6px;
+  background: var(--surface-paper); clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+/* Opened below the pin (the spot above was taken): tail up to the disc. lib/tags bubbleBoxBelow: 14 px + 7 px tail. */
+.map-bubble.is-below { bottom: auto; top: 21px; }
+.map-bubble.is-below::after { top: auto; bottom: 100%; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.map-bubble__at {
+  align-self: flex-start; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  padding: 0; border: 0; background: none; text-align: left;
+  font: var(--text-micro); color: var(--colour-accent-orange-deep);
+}
+/* The link reaches into the bubble's top and side padding, so its target is 24 px tall (WCAG 2.5.8) with the
+   same layout: the padding is taken back by negative margins. */
+button.map-bubble__at { cursor: pointer; margin: -8px -10px 0; padding: 8px 10px 0; max-width: calc(100% + 20px); }
+.map-bubble__main {
+  display: flex; flex-direction: column; gap: 2px; padding: 0; border: 0; background: none;
+  text-align: left; cursor: pointer; color: inherit;
+}
+.map-bubble__quote {
+  font: var(--text-label); overflow: hidden;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;
+}
+.map-bubble__foot { display: flex; justify-content: space-between; gap: 8px; font: var(--text-micro); color: var(--colour-ink-60); }
+.map-bubble__foot > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.map-bubble__more { color: var(--colour-ink-100); }
+.map-bubble:active { box-shadow: var(--elev-press-s); }
+.map-bubble__at:focus-visible, .map-bubble__main:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-pill); }

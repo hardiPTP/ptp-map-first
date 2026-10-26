@@ -1,5 +1,5 @@
 // Turns the offset-based seed (seed.generated.json) into concrete Pins and Supports for a given "now".
-import type { Pin, Support } from '../types.ts'
+import type { Comment, Pin, Support } from '../types.ts'
 import type { RelTime, SeedFile } from './seedTypes.ts'
 
 const MIN = 60_000
@@ -49,7 +49,7 @@ export function tidyRelativeSlot(start: number, end: number | null, now: number)
   return { start: s, end: dur != null ? s + dur : null }
 }
 
-export function materialise(seed: SeedFile, now: number): { pins: Pin[]; supports: Support[] } {
+export function materialise(seed: SeedFile, now: number): { pins: Pin[]; supports: Support[]; comments: Comment[] } {
   const supports: Support[] = seed.supports.map((s) => ({
     id: `${s.pinId}_${s.deviceId}`,
     pinId: s.pinId,
@@ -81,5 +81,14 @@ export function materialise(seed: SeedFile, now: number): { pins: Pin[]; support
       lastSupportAt: lastByPin.get(p.id) ?? null,
     }
   })
-  return { pins, supports }
+  const comments: Comment[] = (seed.comments ?? []).map((c) => ({
+    id: c.id,
+    pinId: c.pinId,
+    text: c.text,
+    deviceId: c.deviceId,
+    createdAt: now + c.createdAtMin * MIN,
+    status: 'live',
+    seed: true,
+  }))
+  return { pins, supports, comments }
 }

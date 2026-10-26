@@ -1,5 +1,8 @@
 // Pure helpers for the create flow (no Google, no store): validation, event time, placeholders.
-export type CreateType = 'civic' | 'event' | 'ask'
+import { offerEndsAt, type OfferEnd } from '../lib/claims'
+
+/** offer: only when posting as a claimed place (DECISIONS.md 2026-10-22). */
+export type CreateType = 'civic' | 'event' | 'ask' | 'offer'
 export type Day = 'today' | 'tomorrow' | 'date'
 
 export const TITLE_MIN = 3
@@ -10,9 +13,10 @@ export const PLACEHOLDER: Record<CreateType, string> = {
   civic: 'Hawkers back on the footpath outside no. 42',
   event: 'Watercolour class for beginners, Sat 5pm',
   ask: 'Need someone to water plants for 3 days',
+  offer: '20% off evening tuition batches this week',
 }
 
-export const TYPE_LABEL: Record<CreateType, string> = { civic: 'Issue', event: 'Event', ask: 'Ask' }
+export const TYPE_LABEL: Record<CreateType, string> = { civic: 'Issue', event: 'Event', ask: 'Ask', offer: 'Offer' }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 /** Local date as yyyy-mm-dd, the value format of <input type="date">. */
@@ -40,12 +44,21 @@ export interface Draft {
   day: Day
   dateStr: string
   timeStr: string
+  /** Offers: when it ends, and the date when "date" is picked (reuses dateStr). */
+  end?: OfferEnd
+  /** Posting as a claimed place: Offer or Event. */
+  asPlace?: boolean
 }
 
 /** Why Post is disabled, or null when it can go. Figma button: "a disabled button says why". */
 export function postBlocker(d: Draft, now: number): string | null {
-  if (!d.type) return 'Choose Issue, Event or Ask'
+  if (!d.type) return d.asPlace ? 'Choose Offer or Event' : 'Choose Issue, Event or Ask'
   if (d.title.trim().length < TITLE_MIN) return 'Add a title, 3 letters or more'
+  if (d.type === 'offer') {
+    if (d.end === 'date' && !d.dateStr) return 'Pick the last day'
+    const at = offerEndsAt(d.end ?? 'week', d.dateStr, now)
+    if (at == null || at < now) return 'Pick a last day that has not passed'
+  }
   if (d.type === 'event') {
     if (d.day === 'date' && !d.dateStr) return 'Pick a date'
     const at = buildStartsAt(d.day, d.dateStr, d.timeStr, now)

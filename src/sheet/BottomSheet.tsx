@@ -1,5 +1,7 @@
 // Bottom sheet: peek (header only) / half (default) / full (list, map strip left above).
 // Drag the handle (pointer events, snap with velocity) or tap it to cycle peek > half > full > half.
+// Single-pointer and keyboard alternatives to the drag (WCAG 2.5.7, 2.1.1): tap / Enter / Space cycle,
+// Arrow Up / Down step up and down, and the header's Map / List pill. A focus landing in the list at peek raises it.
 // Publishes the visible height in px as --sheet-offset on <html> (the app floats locate / + Pin with it).
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type PointerEvent as RPointerEvent } from 'react'
 import { Grabber, SheetSurface } from '../design/primitives'
@@ -12,9 +14,17 @@ const TOP_BAR_FALLBACK = 112
 const MAP_STRIP_PX = 56
 const TAP_SLOP = 6
 const FLICK_PROJECT_MS = 160
+const CLICK_AFTER_POINTER_MS = 500
+const HEIGHT_WORD: Record<SheetHeight, string> = { peek: 'small', half: 'half height', full: 'full height' }
 
 export function nextHeight(h: SheetHeight): SheetHeight {
   return h === 'peek' ? 'half' : h === 'half' ? 'full' : 'half'
+}
+
+/** One step up (+1) or down (-1), stopping at peek and full. */
+export function stepHeight(h: SheetHeight, d: 1 | -1): SheetHeight {
+  const order: SheetHeight[] = ['peek', 'half', 'full']
+  return order[Math.min(2, Math.max(0, order.indexOf(h) + d))]
 }
 
 /** Snap to the nearest height after projecting the release by its velocity (px/ms, negative = up). */
@@ -47,11 +57,14 @@ export function BottomSheet({
 }) {
   const height = useStore((s) => s.sheetHeight)
   const setHeight = useStore((s) => s.setSheetHeight)
-  const wrapRef = useRef<HTMLDivElement>(null)
+  const wrapRef = useRef<HTMLElement>(null)
   const sheetRef = useRef<HTMLDivElement>(null)
   const headRef = useRef<HTMLDivElement>(null)
   const [dims, setDims] = useState({ wrap: typeof window === 'undefined' ? 800 : window.innerHeight, head: 64, safe: 0 })
   const [dragPx, setDragPx] = useState<number | null>(null)
+  // When pointerup last handled a tap or drag (ms), so the click that follows it does not cycle again. A time, not a
+  // flag: after a drag some browsers send no click, and a stale flag would swallow the next Enter.
+  const handledAt = useRef(-Infinity)
   const drag = useRef<{ startY: number; startH: number; lastY: number; lastT: number; v: number; moved: boolean; id: number } | null>(null)
 
   // measure wrapper, header and safe-area padding
@@ -97,6 +110,12 @@ export function BottomSheet({
     const el = sheetRef.current
     if (el) document.documentElement.style.setProperty('--sheet-offset', `${el.offsetHeight}px`)
   }, [shown])
+  // Where the sheet is going (not mid-transition): the map layers use it to know which pins are in view.
+  // A layout effect, so it is set before the map's layer plan (a passive effect earlier in the tree) reads it.
+  const target = snaps[height]
+  useLayoutEffect(() => {
+    document.documentElement.style.setProperty('--sheet-target', `${target}px`)
+  }, [target])
 
   const cycle = useCallback(() => setHeight(nextHeight(useStore.getState().sheetHeight)), [setHeight])
   const pill = useCallback(() => {
@@ -124,6 +143,7 @@ export function BottomSheet({
     const d = drag.current
     drag.current = null
     if (!d) return
+    handledAt.current = performance.now()
     if (!d.moved) {
       cycle()
       return
@@ -132,13 +152,24 @@ export function BottomSheet({
     setDragPx(null)
     setHeight(snapTo(current, d.v, snaps))
   }
-  // Pointer taps and drags are handled on pointerup; a click with detail 0 is keyboard (Enter / Space).
-  const onClick = (e: React.MouseEvent) => {
-    if (e.detail === 0) cycle()
+  // Pointer taps and drags are handled on pointerup. Any other click is keyboard (Enter / Space) or a screen
+  // reader's activation (TalkBack and VoiceOver may send a click without pointer events).
+  const onClick = () => {
+    if (performance.now() - handledAt.current < CLICK_AFTER_POINTER_MS) return
+    cycle()
+  }
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return
+    e.preventDefault()
+    setHeight(stepHeight(useStore.getState().sheetHeight, e.key === 'ArrowUp' ? 1 : -1))
+  }
+  // Tabbing into a card while only the header shows: raise the list so the focused card can be seen (WCAG 2.4.11).
+  const onListFocus = () => {
+    if (useStore.getState().sheetHeight === 'peek') setHeight('half')
   }
 
   return (
-    <div className="sheet-wrap" ref={wrapRef}>
+    <section className="sheet-wrap" ref={wrapRef} aria-label="Pulse">
       <SheetSurface
         {...({ ref: sheetRef } as object)}
         className={['sheet', `sheet--${height}`, dragPx != null && 'is-dragging'].filter(Boolean).join(' ')}
@@ -149,21 +180,23 @@ export function BottomSheet({
           <button
             type="button"
             className="sheet__handle"
-            aria-label={`Resize sheet, now ${height}. Tap to change.`}
+            aria-label={`Resize the list, now ${HEIGHT_WORD[height]}. Tap to change.`}
+            aria-keyshortcuts="ArrowUp ArrowDown"
             onPointerDown={onPointerDown}
             onPointerMove={onPointerMove}
             onPointerUp={onPointerUp}
             onPointerCancel={() => { drag.current = null; setDragPx(null) }}
             onClick={onClick}
+            onKeyDown={onKeyDown}
           >
             <Grabber />
           </button>
           {header(height, pill)}
         </div>
-        <div className={['sheet__scroll', height === 'peek' && 'is-locked'].filter(Boolean).join(' ')} ref={scrollRef}>
+        <div className={['sheet__scroll', height === 'peek' && 'is-locked'].filter(Boolean).join(' ')} ref={scrollRef} onFocus={onListFocus}>
           {children}
         </div>
       </SheetSurface>
-    </div>
+    </section>
   )
 }

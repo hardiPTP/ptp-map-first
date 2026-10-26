@@ -1,7 +1,7 @@
 // Notices from Push The Pin, at the top of Pulse. Figma "source" rule: a confirmed source is a 6px orange dot and
 // grey words, never a coloured edge, so a run of notices reads as small dots, not orange lines.
 // One well row per notice (icon, fact, when, source line). Max 3, "+N more". Tap a row: tint the area, offer share.
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Icon } from '../design/primitives'
 import { distanceM } from '../lib/geo'
 import { isLive } from '../lib/pulse'
@@ -45,6 +45,11 @@ export function AreaStrip({ origin, now }: { origin: LatLng; now: number }) {
   const selectedAreaId = useStore((s) => s.selectedAreaId)
   const selectArea = useStore((s) => s.selectArea)
   const [expanded, setExpanded] = useState(false)
+  // "N more" goes away when pressed: move focus to the first row it revealed, so focus is not lost (WCAG 2.4.3).
+  const firstMore = useRef<HTMLButtonElement>(null)
+  useEffect(() => {
+    if (expanded) firstMore.current?.focus()
+  }, [expanded])
   const rows = useMemo(() => activeAreaUpdates(pins, supports, origin, now), [pins, supports, origin, now])
   if (rows.length === 0) return null
   const shown = expanded ? rows : rows.slice(0, MAX_ROWS)
@@ -53,13 +58,14 @@ export function AreaStrip({ origin, now }: { origin: LatLng; now: number }) {
   return (
     <section className="sheet-notices" aria-label="Notices for this area">
       <ul className="sheet-notices__list">
-        {shown.map((p) => {
+        {shown.map((p, i) => {
           const selected = selectedAreaId === p.id
           const when = noticeWhen(p, now)
           return (
             <li key={p.id}>
               <button
                 type="button"
+                ref={i === MAX_ROWS ? firstMore : undefined}
                 className={['sheet-notice', selected && 'is-selected'].filter(Boolean).join(' ')}
                 aria-pressed={selected}
                 onClick={() => selectArea(selected ? null : p.id)}
