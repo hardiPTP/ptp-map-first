@@ -51,7 +51,8 @@ function Home() {
 }
 
 export function App() {
-  if (location.pathname === '/kitchen-sink') {
+  // BASE_URL is '/' locally and '/ptp-map-first/' on GitHub Pages.
+  if (location.pathname === `${import.meta.env.BASE_URL}kitchen-sink`) {
     return (
       <Suspense fallback={null}>
         <KitchenSink />
